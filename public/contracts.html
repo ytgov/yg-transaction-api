@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-content>
+        <v-container>
+          
+          <v-layout row>
+           <v-flex sm4>
+             
+                <v-text-field 
+                v-model='contractNumber' 
+                label='Contract Number'
+                hint=""
+                @keyup.enter="getContractDetails"
+                >
+              </v-text-field>
+           </v-flex>
+                  
+              <v-flex>
+                  <v-btn @click="getContractDetails">Search</v-btn>
+            </v-flex>
+              </v-layout>
+            </v-container>
+           
+              <v-layout >
+              <v-flex>
+            
+                <v-container v-if='errorMessage'class=" text-xs-center" mb-3>
+                    <span class="red--text">Error: {{errorMessage}}</span>
+                </v-container>
+             
+        <v-data-table
+        :headers="headers"
+        :items="entries"
+        class="elevation-1"
+      >
+        <template v-slot:items="props">
+          <td>{{ props.item.name }}</td>
+          <td class="text-xs-right">{{ props.item.calories }}</td>
+          <td class="text-xs-right">{{ props.item.fat }}</td>
+          <td class="text-xs-right">{{ props.item.carbs }}</td>
+          <td class="text-xs-right">{{ props.item.protein }}</td>
+          <td class="text-xs-right">{{ props.item.iron }}</td>
+        </template>
+      </v-data-table>
+ 
+    </v-layout>
+  </v-flex>
+  
+
+
+
+      </v-content>
+    </v-app>
+  </div>
+ 
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+  <script>
+    new Vue({  
+    el: '#app', 
+    
+    data () {
+      return {
+        contractNumber: "",
+        errorMessage: "",
+        headers: [
+        {text: 'department'},
+        {text: 'revisionType'}, 
+        {text: 'revisionDescription'},
+        {text: 'authorizedBy'},
+        {text: 'authorizedPosition'},
+        {text: 'currentValue'},
+        {text: 'deltaValue'},
+        {text: 'account'},
+        {text: 'contractStartDate'},
+        {text: 'contractNumber'},
+        {text: 'contractEndDate'},
+        {text: 'contractManager'},
+        {text: 'acquisitionMethod'},
+        {text: 'acquisitionEvaluation'},
+        {text: 'contractState'} 
+        /*
+        {
+            text: 'Dessert (100g serving)',
+            align: 'left',
+            sortable: false,
+            value: 'name'
+          },
+          { text: 'Calories', value: 'calories' },
+          { text: 'Fat (g)', value: 'fat' },
+          { text: 'Carbs (g)', value: 'carbs' },
+          { text: 'Protein (g)', value: 'protein' },
+          { text: 'Iron (%)', value: 'iron' }*/
+        ],
+        entries: []
+      }
+    },
+    methods: {
+
+      getContractDetails: function () {
+        axios.get('http://localhost:3001/api/contract/' + this.contractNumber)
+
+      .then((response) => { // handle success
+        this.entries = response.data
+       
+      })
+      .catch((error) => {
+        // handle error
+        this.errorMessage = error.response.statusText 
+       
+        console.log(error.response)
+      })
+  },
+    }
+  })
+        
+  </script>
+</body>
+</html>
