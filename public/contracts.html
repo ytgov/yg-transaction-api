@@ -43,12 +43,21 @@
         class="elevation-1"
       >
         <template v-slot:items="props">
-          <td>{{ props.item.name }}</td>
-          <td class="text-xs-right">{{ props.item.calories }}</td>
-          <td class="text-xs-right">{{ props.item.fat }}</td>
-          <td class="text-xs-right">{{ props.item.carbs }}</td>
-          <td class="text-xs-right">{{ props.item.protein }}</td>
-          <td class="text-xs-right">{{ props.item.iron }}</td>
+	  <td>{{ props.item.department }}</td>
+          <td class="text-xs-center">{{ props.item.revisionType }}</td>
+          <td class="text-xs-right"><a>details</a></td>
+          <td class="text-xs-right">{{ props.item.authorizedBy }}</td>
+          <td class="text-xs-right">{{ props.item.authorizedPosition }}</td>
+          <td class="text-xs-right">{{ props.item.currentValue }}</td>
+	  <td class="text-xs-right">{{ props.item.deltaValue }}</td>
+          <td class="text-xs-right">{{ props.item.account }}</td>
+          <td class="text-xs-right">{{ humanReadableDate(props.item.contractStartDate) }}</td>
+          <td class="text-xs-right">{{ props.item.contractNumber }}</td>
+          <td class="text-xs-right">{{ humanReadableDate(props.item.contractEndDate) }}</td>
+          <td class="text-xs-right">{{ props.item.contractManager }}</td>
+          <td class="text-xs-right">{{ props.item.acquisitionMethod }}</td>
+          <td class="text-xs-right">{{ props.item.acquisitionEvaluation }}</td>
+          <td class="text-xs-right">{{ props.item.contractState }}</td>
         </template>
       </v-data-table>
  
@@ -88,29 +97,26 @@
         {text: 'acquisitionMethod'},
         {text: 'acquisitionEvaluation'},
         {text: 'contractState'} 
-        /*
-        {
-            text: 'Dessert (100g serving)',
-            align: 'left',
-            sortable: false,
-            value: 'name'
-          },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' }*/
         ],
         entries: []
       }
     },
+	computed: {
+	},
     methods: {
+	 humanReadableDate(dateString){
+                        return new Date(dateString).toDateString()
+                },
 
       getContractDetails: function () {
-        axios.get('http://localhost:3001/api/contract/' + this.contractNumber)
+        axios.get('http://inf-docker-tst:3001/api/contract/' + this.contractNumber)
 
       .then((response) => { // handle success
-        this.entries = response.data
+        if (response.data.length){
+         this.entries = response.data
+        }else{
+          this.errorMessage =  "No results found"
+        }
        
       })
       .catch((error) => {
