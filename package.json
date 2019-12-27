@@ -1,0 +1,23 @@
+{
+  "name": "yg-transaction-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
+    "express-jwt-authz": "^2.1.1",
+    "jwks-rsa": "^1.4.0",
+    "knex": "^0.16.3",
+    "mssql": "^5.0.3"
+  },
+  "author": {
+    "name": "Ryan Agar",
+    "email": "ryan.agar@gov.yk.ca"
+  }
+}
