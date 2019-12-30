@@ -34,8 +34,6 @@ var jwtCheck = jwt({
 
 app.use(express.static('public'))
 
-app.get('/', (req, res) => res.send('Hello World!'))
-
 //peron
 app.get('/person/:ynetID', function(req, res) {
   res.send(req.params.ynetID);
@@ -49,53 +47,23 @@ app.get('/person/:ynetID', function(req, res) {
 
 app.get('/person/:ynetID/authorities', function(req, res) {
   res.send(req.params.ynetID + " authorities");
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
 });
 
 app.get('/person/:ynetID/card', function(req, res) {
   res.send(req.params.ynetID + " cards");
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
 });
 
 app.get('/person/:ynetID/transactions', function(req, res) {
   res.send(req.params.ynetID + " transactions");
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
 });
 
 app.get('/person/:ynetID/authorities', function(req, res) {
   res.send(req.params.ynetID + " authorities");
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
 });
 
 //account
 app.get('/account/:account/authorities', function(req, res) {
-  res.send("test");
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
+  res.send(req.params.account + " authorities")
 });
 
 app.post('/account/:account/authorities', function(req, res) {
