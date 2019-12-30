@@ -6,8 +6,6 @@ var sql = require("mssql");
 var environment = process.env.NODE_ENV || 'development'
 var config = require('../db/knexfile.js')[environment]
 
-console.log(config);
-
 var knex = require('knex')({
   client: 'mssql',
   connection: {
