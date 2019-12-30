@@ -3,6 +3,10 @@ var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 var sql = require("mssql");
 
+var environment = process.env.NODE_ENV || 'development'
+var config = require('../db/knexfile.js')[environment]
+
+console.log(config);
 
 var knex = require('knex')({
   client: 'mssql',
@@ -29,53 +33,10 @@ var dbConfig = {
   database: "Finance-Stage"
 };
 
-var pmdQuery = "SELECT \
-secdept as department, \
-SCRevType as revisionType, \
-SCRevDescr as revisionDescription, \
-SCAuthName as authorizedBy, \
-SCAuthPosn as authorizedPosition, \
-SCCurrentVal as currentValue,\
-SCDeltaVal as deltaValue, \
-secaccount as account, \
-SCCommenceDate as contractStartDate, \
-SCContractNum as contractNumber, \
-SCExpiryDate as contractEndDate, \
-SCContMgr as contractManager, \
-SCAcqMethod as acquisitionMethod, \
-SCValuePrice as acquisitionEvaluation, \
-SCContractState as contractState \
-FROM [Finance-Stage].[dbo].[PurContractDistFact] \
-where SCContMgr = 'Ryan Agar'"
-
-
-var contractQuery = function(contract){
-q =  "SELECT \
-scdeptname as department, \
-SCRevType as revisionType, \
-SCRevDescr as revisionDescription, \
-SCAuthName as authorizedBy, \
-SCAuthPosn as authorizedPosition, \
-SCCurrentVal as currentValue,\
-SCDeltaVal as deltaValue, \
-secaccount as account, \
-SCCommenceDate as contractStartDate, \
-SCContractNum as contractNumber, \
-SCExpiryDate as contractEndDate, \
-SCContMgr as contractManager, \
-SCAcqMethod as acquisitionMethod, \
-SCValuePrice as acquisitionEvaluation, \
-SCContractState as contractState \
-FROM [Finance-Stage].[dbo].[PurContractDistFact] \
-where SCContractNum = "
-
-return (q + "'" + contract + "'")
-} 
-
 //Function to connect to database and execute query
-var  executeQuery = function(res, query){             
+var  executeQuery = function(res, query){
   sql.connect(dbConfig, function (err) {
-      if (err) {   
+      if (err) {
                   console.log("Error while connecting database :- " + err);
                   res.send(err);
                }
@@ -93,10 +54,8 @@ var  executeQuery = function(res, query){
               }
             });
           }
-   });           
+   });
 }
-
-
 
 var jwtCheck = jwt({
     secret: jwks.expressJwtSecret({
@@ -109,7 +68,6 @@ var jwtCheck = jwt({
     issuer: "https://cirque.auth0.com/",
     algorithms: ['RS256']
 });
-
 
 app.use(express.static('public'))
 
@@ -125,27 +83,27 @@ app.get('/contract', function(req, res) {
 
 //GET API
 app.get("/api/contract/:contractNumber", function(req , res){
-//	res.send(contractQuery(req.params.contractNumber))  
-knex.select(
-  'scdeptname as department',
-  'SCRevType as revisionType', 
-  'SCRevDescr as revisionDescription',
-  'SCAuthName as authorizedBy',
-  'SCAuthPosn as authorizedPosition',
-  'SCCurrentVal as currentValue',
-  'SCDeltaVal as deltaValue',
-  'secaccount as account',
-  'SCCommenceDate as contractStartDate',
-  'SCContractNum as contractNumber',
-  'SCExpiryDate as contractEndDate',
-  'SCContMgr as contractManager',
-  'SCAcqMethod as acquisitionMethod',
-  'SCValuePrice as acquisitionEvaluation',
-  'SCContractState as contractState')
-.from('[Finance-Stage].[dbo].[PurContractDistFact]')
-.where({SCContractNum: req.params.contractNumber})
+  //	res.send(contractQuery(req.params.contractNumber))
+  knex.select(
+    'scdeptname as department',
+    'SCRevType as revisionType',
+    'SCRevDescr as revisionDescription',
+    'SCAuthName as authorizedBy',
+    'SCAuthPosn as authorizedPosition',
+    'SCCurrentVal as currentValue',
+    'SCDeltaVal as deltaValue',
+    'secaccount as account',
+    'SCCommenceDate as contractStartDate',
+    'SCContractNum as contractNumber',
+    'SCExpiryDate as contractEndDate',
+    'SCContMgr as contractManager',
+    'SCAcqMethod as acquisitionMethod',
+    'SCValuePrice as acquisitionEvaluation',
+    'SCContractState as contractState')
+  .from('[Finance-Stage].[dbo].[PurContractDistFact]')
+  .where({SCContractNum: req.params.contractNumber})
 
-executeQuery (res, contractQuery(req.params.contractNumber));
+  executeQuery (res, contractQuery(req.params.contractNumber));
 });
 
 //app.use(jwtCheck);
@@ -161,5 +119,3 @@ app.get('/api/private-scoped', jwtCheck, checkScopes, function(req, res) {
 });
 
 app.listen(port, host, () => console.log(`Contract API listening on host ${host} at port ${port}!`))
-
-
