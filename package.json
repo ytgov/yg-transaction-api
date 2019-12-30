@@ -14,7 +14,9 @@
     "express-jwt-authz": "^2.1.1",
     "jwks-rsa": "^1.4.0",
     "knex": "^0.16.5",
-    "mssql": "^5.0.3"
+    "mssql": "^5.0.3",
+    "pg": "^7.17.0",
+    "pg-native": "^3.0.0"
   },
   "author": {
     "name": "Ryan Agar",

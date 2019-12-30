@@ -5,16 +5,7 @@ var sql = require("mssql");
 
 var environment = process.env.NODE_ENV || 'development'
 var config = require('../db/knexfile.js')[environment]
-
-var knex = require('knex')({
-  client: 'mssql',
-  connection: {
-    host : 'sql-dw-prd',
-    user : 'restapi',
-    password : 'your_database_password',
-    database : 'Finance-Stage'
-  }
-});
+const knex = require('knex')(config);
 
 const jwtAuthz = require('express-jwt-authz');
 const checkScopes = jwtAuthz([ 'read:messages' ]);
@@ -24,36 +15,6 @@ const port = 3001
 const host = '0.0.0.0';
 
 //Initiallising connection string
-var dbConfig = {
-  user:  "restapi",
-  password: "told-anything-tail-moon",
-  server: "sql-dw-prd",
-  database: "Finance-Stage"
-};
-
-//Function to connect to database and execute query
-var  executeQuery = function(res, query){
-  sql.connect(dbConfig, function (err) {
-      if (err) {
-                  console.log("Error while connecting database :- " + err);
-                  res.send(err);
-               }
-      else {
-            // create Request object
-            var request = new sql.Request();
-            // query to the database
-            request.query(query, function (err, result) {
-              if (err) {
-                          console.log("Error while querying database :- " + err);
-                          res.send(err);
-              }
-              else {
-                res.send(result);
-              }
-            });
-          }
-   });
-}
 
 var jwtCheck = jwt({
     secret: jwks.expressJwtSecret({
@@ -70,6 +31,12 @@ var jwtCheck = jwt({
 app.use(express.static('public'))
 
 app.get('/', (req, res) => res.send('Hello World!'))
+
+app.get('/knex', function(req, res) {
+  knex.select('*').from('quest.budget_profiles').then(function(sql_res){
+    res.send(sql_res);
+  });
+});
 
 app.get('/account/:account/transactions', function(req, res) {
   res.send("Last 30 days of transactions for account: " + req.params.account);
@@ -100,8 +67,6 @@ app.get("/api/contract/:contractNumber", function(req , res){
     'SCContractState as contractState')
   .from('[Finance-Stage].[dbo].[PurContractDistFact]')
   .where({SCContractNum: req.params.contractNumber})
-
-  executeQuery (res, contractQuery(req.params.contractNumber));
 });
 
 //app.use(jwtCheck);
