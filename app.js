@@ -4,7 +4,7 @@ var jwks = require('jwks-rsa');
 var sql = require("mssql");
 
 var environment = process.env.NODE_ENV || 'development'
-var config = require('../db/knexfile.js')[environment]
+var config = require('./knexfile.js')[environment]
 const knex = require('knex')(config);
 
 const jwtAuthz = require('express-jwt-authz');
