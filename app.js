@@ -63,11 +63,53 @@ app.get('/person/:ynetID/authorities', function(req, res) {
 
 //account
 app.get('/account/:account/authorities', function(req, res) {
-  res.send(req.params.account + " authorities")
+  res.send(req.params.account + " authorities");
 });
 
 app.post('/account/:account/authorities', function(req, res) {
-  res.send(req.params.account + " authorities")
+  res.send("create authroity " +req.params.account);
+});
+
+app.get('/authority/:authority', function(req, res) {
+  res.send(req.params.authority + " authority");
+});
+
+app.post('/authority/:authority', function(req, res) {
+  res.send("delete authroity " + req.params.authority);
+});
+
+app.post('/authority/:authority', function(req, res) {
+  res.send("update authroity " + req.params.authority);
+});
+
+//transactions
+app.get('/account/:authority/transactions', function(req, res) {
+  res.send(req.params.authority + " transactions");
+});
+
+app.get('/account/:authority/transactions/:fiscalyear', function(req, res) {
+  res.send(req.params.authority + " transactions for fiscal year " + req.params.fiscalyear);
+});
+
+//default?
+app.get('/account/:department', function(req, res) {
+  res.send("accounts in " + req.params.department);
+});
+
+app.get('/account/:department/:vote', function(req, res) {
+  res.send("accounts in " + req.params.department + " that voted " + req.params.vote);
+});
+
+app.get('/account/:department/:vote/:program', function(req, res) {
+  res.send("accounts in " + req.params.department + " that voted " + req.params.vote + " under program " + req.params.program);
+});
+
+app.get('/account/:department/:vote/:program/:object', function(req, res) {
+  res.send("accounts in " + req.params.department + " that voted " + req.params.vote + " under program " + req.params.program + " with children " + req.params.object);
+});
+
+app.get('/account/:department/:vote/:program/:object/:ledger', function(req, res) {
+  res.send("accounts in " + req.params.department + " that voted " + req.params.vote + " under program " + req.params.program + " with children " + req.params.object + " and subledgers " + req.params.ledger);
 });
 
 app.listen(port, host, () => console.log(`Contract API listening on host ${host} at port ${port}!`))
