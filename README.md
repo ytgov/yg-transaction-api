@@ -23,9 +23,9 @@ This app creates a secure RESTful API for YG transations. Note there are a numbe
 
 ## Installing and running locally
 
-Copy repo from git
-Install docker
-Run: Docker-compose up
+* Copy repo from git
+* Install docker
+* Run: Docker-compose up
 
 ## Access the Dev Enviroment
 https://inf-docker-tst:3000/
