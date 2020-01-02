@@ -1,5 +1,5 @@
 # YG Transactions API
-This app creates a secure RESTful API to a scrambled version of the YuDrive database.  This version is secured with Auth0 using tokens passed in the Authorization header.  Note there are a number of secrets included in this repository so please handle the code accordingly.     
+This app creates a secure RESTful API for YG transations. Note there are a number of secrets included in this repository so please handle the code accordingly.     
 
 **Routes**
 
