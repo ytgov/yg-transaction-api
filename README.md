@@ -1,18 +1,31 @@
-# YuDrive API
+# YG Transactions API
 This app creates a secure RESTful API to a scrambled version of the YuDrive database.  This version is secured with Auth0 using tokens passed in the Authorization header.  Note there are a number of secrets included in this repository so please handle the code accordingly.     
 
 **Routes**
 
-* / - "Hello World" _(not secured)_
-* /authorized - "Token check"
-* /api/private-scoped - "Token check including scope of read:messages
-* /api/client - "Returns a subset of fields from the top 1000 entries from the Client table"
+* /person/:ynetID
+* /person/:ynetID/authorities
+* /person/:ynetID/card
+* /person/:ynetID/transactions
+* /person/:ynetID/authorities
+* /account/:account/authorities
+* /account/:account/authorities
+* /authority/:authority
+* /authority/:authority
+* /authority/:authority
+* /account/:authority/transactions
+* /account/:authority/transactions/:fiscalyear
+* /account/:department
+* /account/:department/:vote
+* /account/:department/:vote/:program
+* account/:department/:vote/:program/:object
+* /account/:department/:vote/:program/:object/:ledger
 
-## Build Your Own
+## Installing and running locally
 
-docker build -t <_your-username-here_>/yudrive-client-api .
-
-docker run -p 3000:3000 -d <_your-username-here_>/yudrive-client-api
+Copy repo from git
+Install docker
+Run: Docker-compose up
 
 ## Access the Dev Enviroment
 https://inf-docker-tst:3000/
@@ -36,4 +49,3 @@ curl --request POST \
 ```
 
 The response will return an access token that you can use your requests against the YuDrive API.
- # yg-transaction-api
