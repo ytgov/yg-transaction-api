@@ -7,7 +7,7 @@ var config = require('./knexfile.js')[environment]
 const knex = require('knex')(config);
 
 const app = express()
-const port = 3001
+const port = 3002
 const host = '0.0.0.0';
 
 //Initiallising connection string
@@ -92,7 +92,8 @@ app.get('/account/:department/:vote/:program/:object/:ledger', function(req, res
 
 app.get('/contract/:contractNum', function(req, res) {
   knex.select('*')
-    .from('softstar.purcontractdistfact')
+    .from('dbo.purcontractdistfact')
+    //.from('softstar.purcontractdistfact')
     .where({sccontractnum:req.params.contractNum})
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
@@ -100,21 +101,24 @@ app.get('/contract/:contractNum', function(req, res) {
 
 app.get('/contract', function(req, res) {
   knex.select('*')
-    .from('softstar.purcontractdistfact')
+    .from('dbo.purcontractdistfact')
+    //.from('softstar.purcontractdistfact')
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
 });
 
 app.get('/invoice', function(req, res) {
   knex.select('*')
-    .from('softstar.arobligfact')
+    .from('dbo.arobligfact')
+    //.from('softstar.arobligfact')
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
 });
 
 app.get('/invoice/:arinvoice', function(req, res) {
   knex.select('*')
-    .from('softstar.arobligfact')
+    .from('dbo.arobligfact')
+    //.from('softstar.arobligfact')
     .where({arinvoice:req.params.arinvoice})
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
@@ -122,7 +126,8 @@ app.get('/invoice/:arinvoice', function(req, res) {
 
 app.get('/vendor', function(req, res) {
   knex.select('*')
-    .from('softstar.vendordim')
+    .from('dbo.vendordim')
+    //.from('softstar.vendordim')
     .join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
