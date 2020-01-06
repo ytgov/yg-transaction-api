@@ -132,7 +132,19 @@ app.get('/vendor', function(req, res) {
   knex.select('*')
     .from('dbo.vendordim')
     //.from('softstar.vendordim')
-    .join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
+    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
+    //.join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
+});
+
+app.get('/vendor/vendorID', function(req, res) {
+  knex.select('*')
+    .from('dbo.vendordim')
+    //.from('softstar.vendordim')
+    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
+    //.join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
+    .where({vendorID:req.params.vendorID})
     .then(sql_res => res.send(sql_res))
     .catch(e => res.send(e))
 });
