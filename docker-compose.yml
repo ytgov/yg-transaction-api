@@ -8,9 +8,14 @@ services:
       - "3001:3001"
   db:
     image: postgres
+    volumes:
+      - db-data:/Users/maxparker/Desktop/APIs/finance/db/data
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_USER=restapi
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DATABASE=demodb
+      - POSTGRES_PASSWORD=""
+      - POSTGRES_DATABASE=SQL-dw-dev
+
+volumes:
+  db-data:

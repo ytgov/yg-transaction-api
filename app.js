@@ -1,14 +1,10 @@
 var express = require('express')
-var jwt = require('express-jwt');
 var jwks = require('jwks-rsa');
 var sql = require("mssql");
 
 var environment = process.env.NODE_ENV || 'development'
 var config = require('./knexfile.js')[environment]
 const knex = require('knex')(config);
-
-const jwtAuthz = require('express-jwt-authz');
-const checkScopes = jwtAuthz([ 'read:messages' ]);
 
 const app = express()
 const port = 3001
@@ -20,29 +16,11 @@ var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
-var jwtCheck = jwt({
-    secret: jwks.expressJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: "https://cirque.auth0.com/.well-known/jwks.json"
-    }),
-    audience: 'https://quickstarts/api',
-    issuer: "https://cirque.auth0.com/",
-    algorithms: ['RS256']
-});
-
 app.use(express.static('public'))
 
 //peron
 app.get('/person/:ynetID', function(req, res) {
-  res.send(req.params.ynetID);
-  // knex.select('*')
-  //   .from('?')
-  //   .where({ynet:req.params.contractNumber})
-  //   .then(function(sql_res){
-  //     res.send(sql_res);
-  //   });
+  //res.send(req.params.ynetID);
 });
 
 app.get('/person/:ynetID/authorities', function(req, res) {
@@ -110,6 +88,44 @@ app.get('/account/:department/:vote/:program/:object', function(req, res) {
 
 app.get('/account/:department/:vote/:program/:object/:ledger', function(req, res) {
   res.send("accounts in " + req.params.department + " that voted " + req.params.vote + " under program " + req.params.program + " with children " + req.params.object + " and subledgers " + req.params.ledger);
+});
+
+app.get('/contract/:contractNum', function(req, res) {
+  knex.select('*')
+    .from('softstar.purcontractdistfact')
+    .where({sccontractnum:req.params.contractNum})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
+});
+
+app.get('/contract', function(req, res) {
+  knex.select('*')
+    .from('softstar.purcontractdistfact')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
+});
+
+app.get('/invoice', function(req, res) {
+  knex.select('*')
+    .from('softstar.arobligfact')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
+});
+
+app.get('/invoice/:arinvoice', function(req, res) {
+  knex.select('*')
+    .from('softstar.arobligfact')
+    .where({arinvoice:req.params.arinvoice})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
+});
+
+app.get('/vendor', function(req, res) {
+  knex.select('*')
+    .from('softstar.vendordim')
+    .join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.send(e))
 });
 
 app.listen(port, host, () => console.log(`Contract API listening on host ${host} at port ${port}!`))
