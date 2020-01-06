@@ -2,12 +2,12 @@ var express = require('express')
 var jwks = require('jwks-rsa');
 var sql = require("mssql");
 
-var environment = process.env.NODE_ENV || 'development'
+var environment = process.env.NODE_ENV || 'staging'
 var config = require('./knexfile.js')[environment]
 const knex = require('knex')(config);
 
 const app = express()
-const port = 3002
+const port = 3001
 const host = '0.0.0.0';
 
 //Initiallising connection string
@@ -17,6 +17,10 @@ var jsonParser = bodyParser.json()
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 app.use(express.static('public'))
+
+app.get('/', function(req, res) {
+  res.send("Hey!");
+});
 
 //peron
 app.get('/person/:ynetID', function(req, res) {

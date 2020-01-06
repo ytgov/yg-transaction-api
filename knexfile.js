@@ -10,17 +10,18 @@ module.exports = {
       database : 'SQL-dw-dev'
     },
     pool: {
-      min: 0,
-      max: 4,
+      min: 2,
+      max: 10,
     }
   },
 
   staging: {
-    client: 'postgresql',
+    client: 'mssql',
     connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
+      host : 'sql-dw-dev',
+      user : 'restapi',
+      password : 'time-SUNDAY-etching-mark',
+      database : 'EDW-Finance-Stage'
     },
     pool: {
       min: 2,
