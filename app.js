@@ -22,6 +22,192 @@ app.get('/', function(req, res) {
   res.send("Hey!");
 });
 
+// app.get('/contract', function(req, res) {
+//   knex.select('*')
+//     .from('dbo.purcontractdistfact')
+//     .then(sql_res => res.send(sql_res))
+//     .catch(e => res.status(404).send('Not found'))
+// });
+
+app.get("/api/contract/:contractNumber", function(req , res){
+  knex.select(
+    'scdeptname as department',
+    'SCRevType as revisionType',
+    'SCRevDescr as revisionDescription',
+    'SCAuthName as authorizedBy',
+    'SCAuthPosn as authorizedPosition',
+    'SCCurrentVal as currentValue',
+    'SCDeltaVal as deltaValue',
+    'secaccount as account',
+    'SCCommenceDate as contractStartDate',
+    'SCContractNum as contractNumber',
+    'SCExpiryDate as contractEndDate',
+    'SCContMgr as contractManager',
+    'SCAcqMethod as acquisitionMethod',
+    'SCValuePrice as acquisitionEvaluation',
+    'SCContractState as contractState')
+    .from('dbo.purcontractdistfact')
+    .where({sccontractnum:req.params.contractNum})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+// app.get("/api/gl/:account", function(req , res){
+//   knex.select()
+//     .from('GLActualsFact')
+//     .where({secaccount: req.params.account})
+//     .then(sql_res => res.send(sql_res))
+//     .catch(e => res.status(404).send('Not found'))
+// });
+
+app.get("/api/gl/:account/:contractNumber", function(req , res){
+  knex.select(
+    "GLActuals as invoiceAmount",
+    "JEDate",
+    "JEDescr as vendorId",
+    "JERefDate",
+    "JERef1 as contractNumber_JEREF1",
+    "JERef2 as invoiceNUmber",
+    "JEAuditUserid",
+    "JEAuditDate",
+    "secaccount as account")
+    .from('EDW-Finance-Stage.dbo.GLActualsFact')
+    .where({secaccount: req.params.account})
+    .where({JERef1: req.params.contractNumber })
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get("/cs/accounts/:accountNumber", function(req , res){
+knex.select(
+    'Account as account',
+    'deptDescr as department',
+    'AcctDescr as accountDescription',
+    'TypeDescr as type',
+    'ActiveDescr as status',
+    'ObjectDescr as objectDescription',
+    'A2VoteDescr as voteDescription',
+    'A2ProgDescr as programDescription',
+    'A2ActivityDescr as activityDescription',
+    'A2ElementDescr as elementDescription')
+    .from('GLAcctDim')
+    .where({account: req.params.accountNumber, dept:51})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get("/cs/accounts", function(req , res){
+  knex.select(
+    'Account as account',
+    'deptDescr as department',
+    'AcctDescr as accountDescription',
+    'TypeDescr as type',
+    'ActiveDescr as status',
+    'ObjectDescr as objectDescription',
+    'A2VoteDescr as voteDescription',
+    'A2ProgDescr as programDescription',
+    'A2ActivityDescr as activityDescription',
+    'A2ElementDescr as elementDescription')
+    .from('EDW-Finance-Stage.dbo.GLAcctDim')
+    .where({dept: '51'})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get('/invoice/:arinvoice', function(req, res) {
+  knex.select('')
+    .from('dbo.arobligfact')
+    .where({arinvoice:req.params.arinvoice})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get('/vendor/:vendorID', function(req, res) {
+  knex.select(
+    'VendName as vendorName',
+    'VendShortName as vendorNameShort',
+    'Org as org',
+    'VendTypeCode as vendorTypeCode',
+    'VendIsPerson as vendorIsPerson',
+    'VendTransCurency as vendorTransCurency',
+    'SIN',
+    'Vend3rdParty as vendorThirdParty',
+    'VendIsPayAllow as vendorIsPayAllow',
+    'VendBank as vendBank',
+    'VendIsVoucherAllow as vendorIsVoucherAllow',
+    'VendIsPurchaseAllow as vendorIsPurchaseAllow',
+    'VendPayTypeCode as vendorPayTypeCode',
+    'VendPayType as vendorPayType',
+    'VendTerms as vendorTerms',
+    'VendNotes as vendorNotes',
+    'VendAddrL1 as vendorAddr1',
+    'VendAddrL2 as vendorAddrL2',
+    'VendAddrL3 as vendorAddrL3',
+    'VendAddrL4 as vendorAddrL3',
+    'VendAddrCity as vendorAddrCity',
+    'VendAddrProv as vendorAddrProv',
+    'VendAddrPost as vendorAddrPost',
+    'VendAddrCountry as vendorAddrCountry',
+    'VendAddrIsDefault as vendorAddrIsDefault'
+    )
+    .from('dbo.vendordim')
+    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
+    .where({vendorID:req.params.vendorID})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => {res.status(404).send('Not found'); console.log(e)})
+});
+
+/*
+app.get('/invoice', function(req, res) {
+  knex.select('*')
+    .from('dbo.arobligfact')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get('/vendor', function(req, res) {
+  knex.select('*')
+    .from('dbo.vendordim')
+    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+*/
+
+app.get('/services/fiscalKeyToPeriod/:fiscalKey', function(req , res) {
+  knex.select('fiscperiod as fiscalPeriod')
+    .from('dbo.fiscperdim')
+    .where({fiscalperkey:req.params.fiscalKey})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+app.get('/services/fiscalDateToPeriod/', function(req , res) {
+  knex.select('fiscperiod as fiscalPeriod')
+    .from('dbo.fiscperdim')
+    .where('PerStartDt', '<=', req.query.date)
+    .where('PerEndDt', '>=', req.query.date)
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
+
+// app.get('services/departmentSearch/:search', function(req , res) {
+//   knex.select('depID', 'dep')
+//     .from('dbo.fdep?')
+//     .where({depID:req.query.search})
+//     .then(sql_res => res.send(sql_res))
+//     .catch(e => res.status(404).send('Not found'))
+// });
+//
+// app.get('services/departmentSearch/:search', function(req , res) {
+//   knex.select('depID', 'dep')
+//     .from('dbo.fiscperdim')
+//     .where({"dep", "ilike", req.query.search})
+//     .then(sql_res => res.send(sql_res))
+//     .catch(e => res.status(404).send('Not found'))
+// });
+
+/* NOT IMPLEMENTED
 //peron
 app.get('/person/:ynetID', function(req, res) {
   //res.send(req.params.ynetID);
@@ -93,60 +279,6 @@ app.get('/account/:department/:vote/:program/:object', function(req, res) {
 app.get('/account/:department/:vote/:program/:object/:ledger', function(req, res) {
   res.send("accounts in " + req.params.department + " that voted " + req.params.vote + " under program " + req.params.program + " with children " + req.params.object + " and subledgers " + req.params.ledger);
 });
-
-app.get('/contract/:contractNum', function(req, res) {
-  knex.select('*')
-    .from('dbo.purcontractdistfact')
-    //.from('softstar.purcontractdistfact')
-    .where({sccontractnum:req.params.contractNum})
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
-
-app.get('/contract', function(req, res) {
-  knex.select('*')
-    .from('dbo.purcontractdistfact')
-    //.from('softstar.purcontractdistfact')
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
-
-app.get('/invoice', function(req, res) {
-  knex.select('*')
-    .from('dbo.arobligfact')
-    //.from('softstar.arobligfact')
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
-
-app.get('/invoice/:arinvoice', function(req, res) {
-  knex.select('*')
-    .from('dbo.arobligfact')
-    //.from('softstar.arobligfact')
-    .where({arinvoice:req.params.arinvoice})
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
-
-app.get('/vendor', function(req, res) {
-  knex.select('*')
-    .from('dbo.vendordim')
-    //.from('softstar.vendordim')
-    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
-    //.join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
-
-app.get('/vendor/vendorID', function(req, res) {
-  knex.select('*')
-    .from('dbo.vendordim')
-    //.from('softstar.vendordim')
-    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
-    //.join('softstar.vendaddrdim', 'softstar.vendaddrdim.vendorkey', 'softstar.vendordim.vendorkey')
-    .where({vendorID:req.params.vendorID})
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.send(e))
-});
+*/
 
 app.listen(port, host, () => console.log(`Contract API listening on host ${host} at port ${port}!`))
