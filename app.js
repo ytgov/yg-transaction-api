@@ -52,13 +52,25 @@ app.get("/api/contract/:contractNumber", function(req , res){
     .catch(e => res.status(404).send('Not found'))
 });
 
-// app.get("/api/gl/:account", function(req , res){
-//   knex.select()
-//     .from('GLActualsFact')
-//     .where({secaccount: req.params.account})
-//     .then(sql_res => res.send(sql_res))
-//     .catch(e => res.status(404).send('Not found'))
-// });
+app.get("/api/gl/:account", function(req , res){
+  knex.select(
+    "JERef1 as contractNumber",
+    "GLActuals as invoiceAmount",
+    "JEDate",
+    "JEDescr as vendorId",
+    "JERefDate",
+    "JERef1 as contractNumber_JEREF1",
+    "JERef2 as invoiceNUmber",
+    "JEAuditUserid",
+    "JEAuditDate",
+    "secaccount as account",
+    "FiscPeriod as fiscalPeriod")
+    .from('dbo.GLActualsFact')
+    .join('dbo.FiscperDim', 'dbo.GLActualsFact.FiscPerKey', 'dbo.FiscperDim.FiscPerKey')
+    .where({secaccount: req.params.account})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => res.status(404).send('Not found'))
+});
 
 app.get("/api/gl/:account/:contractNumber", function(req , res){
   knex.select(
@@ -70,8 +82,10 @@ app.get("/api/gl/:account/:contractNumber", function(req , res){
     "JERef2 as invoiceNUmber",
     "JEAuditUserid",
     "JEAuditDate",
-    "secaccount as account")
-    .from('EDW-Finance-Stage.dbo.GLActualsFact')
+    "secaccount as account",
+    "FiscPeriod as fiscalPeriod")
+    .from('dbo.GLActualsFact')
+    .join('dbo.FiscperDim', 'dbo.GLActualsFact.FiscPerKey', 'dbo.FiscperDim.FiscPerKey')
     .where({secaccount: req.params.account})
     .where({JERef1: req.params.contractNumber })
     .then(sql_res => res.send(sql_res))
@@ -114,13 +128,13 @@ app.get("/cs/accounts", function(req , res){
     .catch(e => res.status(404).send('Not found'))
 });
 
-app.get('/invoice/:arinvoice', function(req, res) {
-  knex.select('')
-    .from('dbo.arobligfact')
-    .where({arinvoice:req.params.arinvoice})
-    .then(sql_res => res.send(sql_res))
-    .catch(e => res.status(404).send('Not found'))
-});
+// app.get('/invoice/:arinvoice', function(req, res) {
+//   knex.select('')
+//     .from('dbo.arobligfact')
+//     .where({arinvoice:req.params.arinvoice})
+//     .then(sql_res => res.send(sql_res))
+//     .catch(e => res.status(404).send('Not found'))
+// });
 
 app.get('/vendor/:vendorID', function(req, res) {
   knex.select(
@@ -154,7 +168,7 @@ app.get('/vendor/:vendorID', function(req, res) {
     .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
     .where({vendorID:req.params.vendorID})
     .then(sql_res => res.send(sql_res))
-    .catch(e => {res.status(404).send('Not found'); console.log(e)})
+    .catch(e => {res.status(404).send('Not found')})
 });
 
 /*
