@@ -1,0 +1,806 @@
+
+penapi: 3.0.0
+
+servers:
+  - description: YG's API Gateway
+    url: https://api.ynet.gov.yk.ca/finance/{dept}/{version}
+info:
+  description: An API for financial transactions at Yukon Government
+  version: "1.1.1"
+  title: Yukon Government Financial Services API
+  contact:
+    email: ryan.agar@gov.yk.ca
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+
+      
+paths:
+  /person/{ynetID}:
+    parameters: 
+      - in: path
+        name: ynetID
+        schema:
+          type: string
+        required: true
+        description: Looks up a person by ynetID
+    get:
+      summary: lookup person information
+      tags:
+        - person
+        - planned
+      operationId: lookup person
+      description: This resource represents an individual user in the system.  Each user is identified by a ynetID.
+      
+    
+      responses:
+        '200':
+          description: display person details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+        '400':
+          description: bad input parameter
+        '404':
+          description: could not find a person with that ynetID
+  
+  /person/{ynetID}/authorities:
+    get:
+      summary: list the accounts and authorites to which a person has access
+      tags:
+        - person
+        - planned
+      operationId: personAuthorities
+      description: 
+        When provided a ynetID this will return inforamtion about a person's signing authorities
+      
+      parameters: 
+      - in: path
+        name: ynetID
+        schema:
+          type: string
+        required: true
+        description: Given an ynetID return a list of authorities assigned to a person
+      
+            
+      responses:
+        '200':
+          description: Authorities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorityItem'
+  
+
+  /person/{ynetID}/card:
+    get:
+      summary: display the signing authority card
+      tags:
+        - person
+        - planned
+      operationId: lookup person signing card
+      description: 
+        Returns an image of the signing authority card
+      parameters:
+        - in: path
+          name: ynetID
+          description: The ynetID of the person for whom we're looking
+          required: true
+          schema:
+            type: string
+            
+      responses:
+        '200':
+          description: Authorities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorityItem'
+  
+  /person/{ynetID}/transactions:
+    get:
+      summary: display the recent transactions authorized by this user
+      tags:
+        - person
+        - planned
+      operationId: getPersonTransactions
+      description: 
+        Returns a list of all transactions authorized by this user
+      parameters:
+        - in: path
+          name: ynetID
+          description: The ynetID of the person for whom we're looking
+          required: true
+          schema:
+            type: string
+            
+      responses:
+        '200':
+          description: transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorityItem'
+  
+  /account:
+    get:
+      summary: returns all accounts
+      tags: 
+        - account
+        - beta
+      security:
+        - AccountAPIKey: []
+      responses:
+        '200':
+          description: search results matching criteria
+  
+  
+  /account/{account}:
+    get:
+      summary: return the details of an account
+      tags:
+        - account
+        - beta
+      operationId: getAccountDetails
+      
+      security:
+        - AccountAPIKey: []
+      
+      parameters:
+        - in: path
+          name: account
+          description: The account number for which we want details
+          required: true
+          schema:
+            type: string
+            
+      responses:
+        '200':
+          description: returns a json object with the date and current balance
+          
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountItem'
+           
+          links:
+            transactions:
+              operationId: getAcccountTransactions
+              parameters:
+                account: '$response.body#/account'
+              
+            Authorities:
+              operationId: getAcccountAuthorities
+              parameters:
+                account: '$response.body#/account'
+  
+
+  /account/{account}/balance:
+    get:
+      deprecated: true
+      summary: check the current balance of the acount
+      tags:
+        - account
+        - planned
+      
+      responses:
+        '200':
+          description: returns a json object with the date and current balance
+      parameters:
+        - in: path
+          name: account
+          description: The account number for which we want a balance
+          required: true
+          schema:
+            type: string
+            
+  ############################################
+  #
+  # Transaction Definitions
+  #
+  ############################################
+  /account/{account}/transactions:
+    parameters:
+        - in: path
+          name: account
+          description:  valid account numbers; summary accounts and account numbers that contain '-' are invalid 
+          required: true
+          schema:
+            type: string
+    get:
+      summary: return the last 90 days of transactions
+      security: 
+        - AccountAPIKey: []
+        
+      tags: 
+        - transactions
+        - beta
+      operationId: getAccountTransactionsDefault
+      
+      responses:
+        '200':
+          description: returns a JSON array of transaction objects
+          
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RAWTransaction'
+          
+        '404':
+          description: no transactions found
+  
+  /account/{account}/transactions/{fiscalyear}:
+    parameters:
+        - in: path
+          name: account
+          description: a valid account numbers, summary accounts and accounts with '-' are invalid
+          required: true
+          schema:
+            type: string
+            
+        - in: path
+          name: fiscalyear
+          description: the fiscal year in the format YYYY 
+          required: true
+          schema:
+            type: string
+            
+    get:
+      summary: return the transactions on the account
+      security: 
+        - AccountAPIKey: []
+        
+      tags: 
+        - transactions
+        - beta
+      operationId: getAccountTransactions
+      
+      responses:
+        '200':
+          description: returns a JSON array of transaction objects 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+                  
+        '404':
+          description: no transactions found
+    
+    
+          
+  ############################################
+  #
+  # Authority Definitions
+  #
+  ############################################
+  /account/{account}/authorities:
+    parameters:
+      - in: path
+        name: account
+        description: The account number for which we want details
+        required: true
+        schema:
+          type: string
+    
+    get:
+      summary: get a list of all authorities attached to the account
+      tags: 
+        - account
+        - authorities
+        - planned
+      operationId: getAccountAuthorities
+    
+      responses:
+        '200':
+          description: returns an array of authorities; returns and empty array if no authorities are found.  
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuthorityItem'
+                  
+        '404':
+          description: no authories found for this account
+          
+    post:
+      summary: create a new authority
+      tags:
+        - authorities
+        - planned
+      security: 
+        - AuthorityAuth: []
+      responses:
+        '200':
+          description: create a new authority on the account
+  
+    delete:
+      summary: delete authority
+      tags:
+        - authorities
+      
+      security: 
+       - AuthorityAuth: [] 
+        
+      responses:
+        '200':
+          description: create a new authority on the account             
+  /authority/{authority}:
+    parameters:
+      - in: path
+        name: authority
+        description: a valid authority type
+        required: true
+        schema:
+          type: string
+  
+    
+    get:
+      summary: get the details of a authority
+      tags: 
+        - authorities
+        - planned
+
+      responses:
+        '200':
+          description: provides the details of a authority
+    
+    
+    delete:
+      summary: delete an authoriry identified by authorityID
+      tags:
+        - authorities
+        - planned
+      security: 
+       - AuthorityAuth: [] 
+        
+      responses:
+        '200':
+          description: creeate a new commitment
+    
+    patch:
+      summary: update an authority as identified by authority ID
+      tags:
+        - authorities
+        - planned
+      security: 
+       - AccountAPIKey: []
+        
+      responses:
+        '200':
+          description: creeate a new authority entry
+    
+  
+   
+          
+  ############################
+  #
+  # Account Break Out Section
+  #
+  ############################
+  /account/{department}:
+    get:
+      summary: list the child accounts
+      
+      parameters:
+      - in: path
+        name: department
+        description: The department for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      responses:
+        '200':
+          description: an array of all the child accounts for the dept
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountItem'
+                  
+  /account/{department}/{vote}:
+    
+    parameters:
+      - in: path
+        name: department
+        description: The department for which we want to list accounts
+        required: true
+        schema:
+          type: string
+        
+      - in: path
+        name: vote
+        description: The vote for which we want to list accounts
+        required: true
+        schema:
+          type: string
+    
+    get:
+      summary: list the accounts under vote 
+      
+      responses:
+        '200':
+          description: array of accounts under a specific vote
+  
+  /account/{department}/{vote}/{program}:
+    
+    parameters:
+      - in: path
+        name: department
+        description: a valid department code  
+        required: true
+        schema:
+          type: string
+        
+      - in: path
+        name: vote
+        description: The vote for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      - in: path
+        name: program
+        description: The program for which we want to list accounts
+        required: true
+        schema:
+          type: string
+    
+    
+    get:
+      summary: list the account under program
+      
+      responses:
+        '200':
+          description: array of account under a program
+  
+  /account/{department}/{vote}/{program}/{object}:
+    parameters:
+      - in: path
+        name: department
+        description: The department for which we want to list accounts
+        required: true
+        schema:
+          type: string
+        
+      - in: path
+        name: vote
+        description: The vote for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      - in: path
+        name: program
+        description: The program for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      - in: path
+        name: object
+        description: The object code for which we want to list accounts
+        required: true
+        schema:
+          type: string
+    
+    get:
+      summary: return children of an object
+      
+      responses:
+        '200':
+          description:  return children of an object
+  /account/{department}/{vote}/{program}/{object}/{ledger}:
+    parameters:
+      - in: path
+        name: department
+        description: The department for which we want to list accounts
+        required: true
+        schema:
+          type: string
+        
+      - in: path
+        name: vote
+        description: The vote for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      - in: path
+        name: program
+        description: The program for which we want to list accounts
+        required: true
+        schema:
+          type: string
+      
+      - in: path
+        name: object
+        description: The object code for which we want to list accounts
+        required: true
+        schema:
+          type: string
+          
+      - in: path
+        name: ledger
+        description: The ledger code for which we want to list accounts
+        required: true
+        schema:
+          type: string
+    
+    get:
+      summary: return sublegers
+      
+      responses:
+        '200':
+          description: return subledgers
+
+components:
+
+  securitySchemes:
+
+    CommitmentAuth:
+      type: http
+      scheme: basic
+    
+    TransactionAuth:
+      type: http
+      scheme: basic
+    
+    AuthorityAuth:
+      type: http
+      scheme: basic
+    
+    AccountAPIKey:
+      type: apiKey
+      name: AccountApi_key
+      in: header
+      
+  schemas:
+    Person:
+      type: object
+      required:
+        - ynetID
+      properties:
+        name:
+          type: string
+          example: John Smith
+        ynetID:
+          type: string
+          example: jsmith 
+        role:
+          type: string
+          example: Manager HR
+        department:
+          type: string
+          example: Environment
+    
+    AuthorityItem:
+      type: object
+      required:
+        - id
+        - account
+        - section
+        - limit
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        section:
+          $ref: '#/components/schemas/Authority'
+        account:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountItem'  
+        person:
+          type: array
+          items:
+            $ref: '#/components/schemas/Person'
+        limit:
+          type: string
+          example: 50000
+        expiry-date:
+          type: string
+          example: Dec 31, 2017
+    
+    AccountItem:
+      type: object
+      required:
+        - id
+        - account
+        - description
+      
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        account:
+          type: string
+          example: 39414191234
+        notes:
+          type: string
+          example: 'Admin Support'
+        balance:
+          type: integer
+          example: '15000'
+        budgeted:
+          type: integer
+          example: '20000'
+        type:
+          type: string
+          example: 'Expense'
+      
+    Authority:
+      type: object
+      required:
+        - authority_type
+        - description
+      
+      properties:
+        authority_type: 
+          type: string
+          example: 30
+        description:
+          type: string
+          example: 'Section 29 - Authorization to Pay'
+
+    RAWTransaction: 
+      type: object
+      
+      properties:
+        GLFactKey:
+          type: string
+          example: '7680885'
+        AcctKey:
+          type: string
+          example: '168781'
+        FiscPerKey:
+          type: string
+          example: '699'
+        JEDateKey:
+          type: string
+          example: '21272'
+        RefDateKey:
+          type: string
+          example: '21272'
+        GLActuals:
+          type: string
+          example: '6525'
+
+        JEDate:
+          type: string
+          example: "2018-03-29T00:00:00.000Z"
+        
+        JESysNo:
+          type: string
+          example: "AP3376"
+        JESys:
+          type: string
+          example: "AP"
+        JENo: 
+          type: string
+          example: "3376"
+        JEDescr: 
+          type: string
+          example: "CDNULLISECUN"
+        
+        JERefDate:
+          type: string
+          example: "2018-03-29T00:00:00.000Z"
+        JERef1:
+          type: string
+          example: "C00040032"
+        
+        JERef2: 
+          type: string
+          example: "2777"
+        JERef3:
+          type: string
+          example: "955513268"
+          
+        JERef4: 
+          type: string
+          example: " "
+        ExternKey:
+          type: string
+          example: "55    APVO  EXPN"
+    
+        JEAuditUserid":
+          type: string
+          example: "RECURR"
+        JEAuditDate: 
+          type: string
+          example: "2018-04-20T00:00:00.000Z"
+        JEAuditTime: 
+          type: string
+          example: "1970-01-01T14:07:52.060Z"
+          
+        secaccount: 
+          type: string
+          example: "55215800102223043"
+        secdept: 
+          type: string
+          example: "55"
+        secvote: 
+          type: string
+          example: "2"
+        secprog: 
+          type: string
+          example: "15"
+        secactivity: 
+          type: string
+          example: "80"
+        
+        secprogram: 
+          type: string
+          example: "158001"
+        secdept99: 
+          type: string
+          example: "55"
+        secorg: 
+          type: string
+          example: "YUKON"
+        
+        
+      
+    Transaction: 
+      type: object
+      properties:
+          account:
+            type: object
+            items:
+              $ref: '#/components/schemas/AccountItem'
+          fiscal_year:
+            type: string
+            example: '2018'
+            
+          fiscal_period:
+            type: string
+            example: '8'
+          
+          journal_id:
+            type: string
+            example: ''
+          
+          amount:
+            type: integer
+            example: ''
+          
+          description:
+            type: string
+            example: ''
+          
+          year_end_adjustment:
+            type: integer
+            example: ''
+          
+          journal_date:
+            type: string
+            example: ''
+          
+          audit_date_time:
+            type: string
+            example: ''
+            
+          audit_user:
+            type: string
+            example: ''
