@@ -177,9 +177,12 @@ app.get('/vendor', function(req, res) {
 app.get('/services/fiscalKeyToPeriod/:fiscalKey', function(req , res) {
   knex.select('fiscperiod as fiscalPeriod')
     .from('dbo.fiscperdim')
-    .where({fiscalperkey:req.params.fiscalKey})
+    .where({fiscperkey:req.params.fiscalKey})
     .then(sql_res => res.send(sql_res))
-    .catch(e => res.status(404).send('Not found'))
+    .catch(function(e){ 
+	res.status(404).send('Not found');
+	console.log(e);
+    })
 });
 
 app.get('/services/fiscalDateToPeriod/', function(req , res) {
@@ -187,8 +190,12 @@ app.get('/services/fiscalDateToPeriod/', function(req , res) {
     .from('dbo.fiscperdim')
     .where('PerStartDt', '<=', req.query.date)
     .where('PerEndDt', '>=', req.query.date)
+    .first()
     .then(sql_res => res.send(sql_res))
-    .catch(e => res.status(404).send('Not found'))
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
 });
 
 // app.get('services/departmentSearch/:search', function(req , res) {
