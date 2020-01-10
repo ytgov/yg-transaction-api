@@ -138,37 +138,40 @@ app.get("/cs/accounts", function(req , res){
 
 app.get('/vendor/:vendorID', function(req, res) {
   knex.select(
-    'VendName as vendorName',
-    'VendShortName as vendorNameShort',
-    'Org as org',
-    'VendTypeCode as vendorTypeCode',
-    'VendIsPerson as vendorIsPerson',
-    'VendTransCurency as vendorTransCurency',
-    'SIN',
-    'Vend3rdParty as vendorThirdParty',
-    'VendIsPayAllow as vendorIsPayAllow',
-    'VendBank as vendBank',
-    'VendIsVoucherAllow as vendorIsVoucherAllow',
-    'VendIsPurchaseAllow as vendorIsPurchaseAllow',
-    'VendPayTypeCode as vendorPayTypeCode',
-    'VendPayType as vendorPayType',
-    'VendTerms as vendorTerms',
-    'VendNotes as vendorNotes',
-    'VendAddrL1 as vendorAddr1',
-    'VendAddrL2 as vendorAddrL2',
-    'VendAddrL3 as vendorAddrL3',
-    'VendAddrL4 as vendorAddrL3',
-    'VendAddrCity as vendorAddrCity',
-    'VendAddrProv as vendorAddrProv',
-    'VendAddrPost as vendorAddrPost',
-    'VendAddrCountry as vendorAddrCountry',
-    'VendAddrIsDefault as vendorAddrIsDefault'
+    'v.VendName as vendorName',
+    'v.VendShortName as vendorNameShort',
+    'v.Org as org',
+    'v.VendTypeCode as vendorTypeCode',
+    'v.VendIsPerson as vendorIsPerson',
+    'v.VendTransCurrency as vendorTransCurrency',
+    'v.SIN',
+    'v.Vend3rdParty as vendorThirdParty',
+    'v.VendIsPayAllow as vendorIsPayAllow',
+    'v.VendBank as vendBank',
+    'v.VendIsVoucherAllow as vendorIsVoucherAllow',
+    'v.VendIsPurchaseAllow as vendorIsPurchaseAllow',
+    'v.VendPayTypeCode as vendorPayTypeCode',
+    'v.VendPayType as vendorPayType',
+    'v.VendTerms as vendorTerms',
+    'v.VendNotes as vendorNotes',
+    'va.VendAddrL1 as vendorAddr1',
+    'va.VendAddrL2 as vendorAddrL2',
+    'va.VendAddrL3 as vendorAddrL3',
+    'va.VendAddrL4 as vendorAddrL3',
+    'va.VendAddrCity as vendorAddrCity',
+    'va.VendAddrProv as vendorAddrProv',
+    'va.VendAddrPost as vendorAddrPost',
+    'va.VendAddrCountry as vendorAddrCountry',
+    'va.VendAddrIsDefault as vendorAddrIsDefault'
     )
-    .from('dbo.vendordim')
-    .join('dbo.vendaddrdim', 'dbo.vendaddrdim.vendorkey', 'dbo.vendordim.vendorkey')
-    .where({vendorID:req.params.vendorID})
+    .from('dbo.vendordim as v')
+    .join('dbo.vendaddrdim as va', 'v.vendorkey', 'va.vendorkey')
+    .where({'v.vendorID': req.params.vendorID})
     .then(sql_res => res.send(sql_res))
-    .catch(e => {res.status(404).send('Not found')})
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
 });
 
 /*
