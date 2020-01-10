@@ -136,6 +136,19 @@ app.get("/cs/accounts", function(req , res){
 //     .catch(e => res.status(404).send('Not found'))
 // });
 
+app.get('/vendorSearch', function(req, res) {
+let search =
+  knex.select(req.query.vendorID);
+    'VendName as vendorName',
+    'VendShortName as vendorNameShort',
+    )
+    .from('dbo.vendordim')
+    .where('vedorName', 'ilike', '%'+req.query.search+'%'})
+    .orwhere('vedorNameShort', 'ilike', '%'+req.query.search+'%'})
+    .then(sql_res => res.send(sql_res))
+    .catch(e => {res.status(404).send('Not found')})
+});
+
 app.get('/vendor/:vendorID', function(req, res) {
   knex.select(
     'v.VendName as vendorName',
@@ -196,9 +209,9 @@ app.get('/services/fiscalKeyToPeriod/:fiscalKey', function(req , res) {
     .from('dbo.fiscperdim')
     .where({fiscperkey:req.params.fiscalKey})
     .then(sql_res => res.send(sql_res))
-    .catch(function(e){ 
-	res.status(404).send('Not found');
-	console.log(e);
+    .catch(function(e){
+    	res.status(404).send('Not found');
+    	console.log(e);
     })
 });
 
@@ -210,8 +223,8 @@ app.get('/services/fiscalDateToPeriod/', function(req , res) {
     .first()
     .then(sql_res => res.send(sql_res))
     .catch(function(e){
-        res.status(404).send('Not found');
-        console.log(e);
+      res.status(404).send('Not found');
+      console.log(e);
     })
 });
 
