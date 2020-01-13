@@ -138,15 +138,19 @@ app.get("/cs/accounts", function(req , res){
 
 app.get('/vendorSearch', function(req, res) {
 let search =
-  knex.select(req.query.vendorID);
+  knex.select(
+    'VendorID as vendorID',
     'VendName as vendorName',
-    'VendShortName as vendorNameShort',
+    'VendShortName as vendorNameShort'
     )
     .from('dbo.vendordim')
-    .where('vedorName', 'ilike', '%'+req.query.search+'%'})
-    .orwhere('vedorNameShort', 'ilike', '%'+req.query.search+'%'})
+    .where('VendName', 'like', '%'+req.query.search+'%')
+    .orWhere('VendShortName', 'like', '%'+req.query.search+'%')
     .then(sql_res => res.send(sql_res))
-    .catch(e => {res.status(404).send('Not found')})
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
 });
 
 app.get('/vendor/:vendorID', function(req, res) {
