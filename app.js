@@ -1,7 +1,7 @@
 var express = require('express')
 var jwks = require('jwks-rsa');
 var sql = require("mssql");
-
+ 
 var environment = process.env.NODE_ENV || 'staging'
 var config = require('./knexfile.js')[environment]
 const knex = require('knex')(config);
@@ -128,17 +128,49 @@ app.get("/cs/accounts", function(req , res){
     .catch(e => res.status(404).send('Not found'))
 });
 
-// app.get('/invoice/:arinvoice', function(req, res) {
-//   knex.select('')
-//     .from('dbo.arobligfact')
-//     .where({arinvoice:req.params.arinvoice})
-//     .then(sql_res => res.send(sql_res))
-//     .catch(e => res.status(404).send('Not found'))
-// });
+ app.get('/invoice/:arinvoice', function(req, res) {
+   knex.select('*')
+    .from('dbo.arobligfact as i')
+    .leftJoin('dbo.arobligpayfact as p', 'i.arinvoice', 'p.arinvoice')
+    .where({'i.arinvoice':req.params.arinvoice})
+    .then(sql_res => res.send(sql_res))
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    }) 
+});
+
+ app.get('/invoice', function(req, res) {
+   knex.select('arinvoice')
+    .from('dbo.arobligfact')
+    .then(sql_res => res.send(sql_res))
+    .catch(function(e){
+        res.status(404).send('Not found');
+    }) 
+})
+
+app.get('/customerSearch', function(req, res) {
+let search =
+  knex.select(
+    'CustomerKey as customerKey',
+    'CustomerId as customerID',
+    'custName as customerName',
+    'custShortName as custNameShort'
+    )
+    .from('dbo.customerDim')
+    .where('custName', 'like', '%'+req.query.search+'%')
+    .orWhere('custShortName', 'like', '%'+req.query.search+'%')
+    .then(sql_res => res.send(sql_res))
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
+});
 
 app.get('/vendorSearch', function(req, res) {
 let search =
   knex.select(
+    'vendorKey as vendorKey',
     'VendorID as vendorID',
     'VendName as vendorName',
     'VendShortName as vendorNameShort'
