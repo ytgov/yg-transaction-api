@@ -185,6 +185,90 @@ let search =
     })
 });
 
+app.get('/vendor/person', function(req, res) {
+  var query = knex.select(
+    'v.VendName as vendorName',
+    'v.VendShortName as vendorNameShort',
+    'v.Org as org',
+    'v.VendTypeCode as vendorTypeCode',
+    'v.VendIsPerson as vendorIsPerson',
+    'v.VendTransCurrency as vendorTransCurrency',
+    'v.SIN',
+    'v.Vend3rdParty as vendorThirdParty',
+    'v.VendIsPayAllow as vendorIsPayAllow',
+    'v.VendBank as vendBank',
+    'v.VendIsVoucherAllow as vendorIsVoucherAllow',
+    'v.VendIsPurchaseAllow as vendorIsPurchaseAllow',
+    'v.VendPayTypeCode as vendorPayTypeCode',
+    'v.VendPayType as vendorPayType',
+    'v.VendTerms as vendorTerms',
+    'v.VendNotes as vendorNotes',
+    'va.VendAddrL1 as vendorAddr1',
+    'va.VendAddrL2 as vendorAddrL2',
+    'va.VendAddrL3 as vendorAddrL3',
+    'va.VendAddrL4 as vendorAddrL3',
+    'va.VendAddrCity as vendorAddrCity',
+    'va.VendAddrProv as vendorAddrProv',
+    'va.VendAddrPost as vendorAddrPost',
+    'va.VendAddrCountry as vendorAddrCountry',
+    'va.VendAddrIsDefault as vendorAddrIsDefault'
+    )
+    .from('dbo.vendordim as v')
+    .join('dbo.vendaddrdim as va', 'v.vendorkey', 'va.vendorkey')
+    .where('VendIsPerson', '1')
+    if(typeof req.query.first != 'undefined') query.andWhere('VendName', 'like', req.query.first+' %')
+    if(typeof req.query.last != 'undefined') query.andWhere('VendName', 'like', '%'+req.query.last)
+    if(typeof req.query.middle != 'undefined') query.andWhere('VendName', 'like', '% '+req.query.middle+' %')
+    if(typeof req.query.postal != 'undefined') query.andWhere('VendAddrPost', 'like', '% '+req.query.postal)
+    query.then(function(sql_res){
+        if(sql_res.length == 1) res.send(sql_res);
+	else res.sendStatus(403);
+    })
+    query.catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
+});
+
+app.get('/vendor/business', function(req, res) {
+  var query = knex.select(
+    'v.VendName as vendorName',
+    'v.VendShortName as vendorNameShort',
+    'v.Org as org',
+    'v.VendTypeCode as vendorTypeCode',
+    'v.VendIsPerson as vendorIsPerson',
+    'v.VendTransCurrency as vendorTransCurrency',
+    'v.SIN',
+    'v.Vend3rdParty as vendorThirdParty',
+    'v.VendIsPayAllow as vendorIsPayAllow',
+    'v.VendBank as vendBank',
+    'v.VendIsVoucherAllow as vendorIsVoucherAllow',
+    'v.VendIsPurchaseAllow as vendorIsPurchaseAllow',
+    'v.VendPayTypeCode as vendorPayTypeCode',
+    'v.VendPayType as vendorPayType',
+    'v.VendTerms as vendorTerms',
+    'v.VendNotes as vendorNotes',
+    'va.VendAddrL1 as vendorAddr1',
+    'va.VendAddrL2 as vendorAddrL2',
+    'va.VendAddrL3 as vendorAddrL3',
+    'va.VendAddrL4 as vendorAddrL3',
+    'va.VendAddrCity as vendorAddrCity',
+    'va.VendAddrProv as vendorAddrProv',
+    'va.VendAddrPost as vendorAddrPost',
+    'va.VendAddrCountry as vendorAddrCountry',
+    'va.VendAddrIsDefault as vendorAddrIsDefault'
+    )
+    .from('dbo.vendordim as v')
+    .join('dbo.vendaddrdim as va', 'v.vendorkey', 'va.vendorkey')
+    .where('VendName', 'like', '%'+req.query.name+'%')
+    .orWhere('VendShortName', 'like', '%'+req.query.name+'%')
+    query.then(sql_res => res.send(sql_res))
+    query.catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
+});
+
 app.get('/vendor/:vendorID', function(req, res) {
   knex.select(
     'v.VendName as vendorName',
@@ -216,6 +300,18 @@ app.get('/vendor/:vendorID', function(req, res) {
     .from('dbo.vendordim as v')
     .join('dbo.vendaddrdim as va', 'v.vendorkey', 'va.vendorkey')
     .where({'v.vendorID': req.params.vendorID})
+    .then(sql_res => res.send(sql_res))
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
+});
+
+app.get('/invoices/:vendorID', function(req, res) {
+  knex.select('*')
+    .from('dbo.vendordim')
+    .join('dbo.apdistfact', 'dbo.vendordim.vendorkey', 'dbo.apdistfact.vendorkey')
+    .where({vendorID : req.params.vendorID})
     .then(sql_res => res.send(sql_res))
     .catch(function(e){
         res.status(404).send('Not found');
