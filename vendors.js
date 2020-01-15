@@ -1,4 +1,6 @@
-
+var environment = process.env.NODE_ENV || 'staging';
+var config = require('./knexfile.js')[environment];
+const knex = require('knex')(config);
 
 exports.vendorSearchByName = function(req, res) {
   let search = knex.select(
@@ -37,7 +39,7 @@ exports.personSearch = function(req, res){
     'va.VendAddrL1 as vendorAddr1',
     'va.VendAddrL2 as vendorAddrL2',
     'va.VendAddrL3 as vendorAddrL3',
-    'va.VendAddrL4 as vendorAddrL3',
+    'va.VendAddrL4 as vendorAddrL4',
     'va.VendAddrCity as vendorAddrCity',
     'va.VendAddrProv as vendorAddrProv',
     'va.VendAddrPost as vendorAddrPost',
@@ -103,6 +105,7 @@ exports.businessSearch = function(req, res){
 
 exports.vendorSearchByVendorID = function(req, res) {
   knex.select(
+    'v.vendorkey as vendorKey',
     'v.VendName as vendorName',
     'v.VendShortName as vendorNameShort',
     'v.Org as org',
@@ -163,3 +166,5 @@ exports.customerSearchByCustomerId = function(req, res) {
         console.log(e);
     })
 }
+
+
