@@ -170,7 +170,6 @@ let search =
 app.get('/vendorSearch', function(req, res) {
 let search =
   knex.select(
-    'vendorKey as vendorKey',
     'VendorID as vendorID',
     'VendName as vendorName',
     'VendShortName as vendorNameShort'
@@ -307,11 +306,24 @@ app.get('/vendor/:vendorID', function(req, res) {
     })
 });
 
-app.get('/invoices/:vendorID', function(req, res) {
-  knex.select('*')
+app.get('/apInvoices/:vendorID', function(req, res) {
+  knex.select('dbo.apdistfact.*')
     .from('dbo.vendordim')
     .join('dbo.apdistfact', 'dbo.vendordim.vendorkey', 'dbo.apdistfact.vendorkey')
     .where({vendorID : req.params.vendorID})
+    .then(sql_res => res.send(sql_res))
+    .catch(function(e){
+        res.status(404).send('Not found');
+        console.log(e);
+    })
+});
+
+app.get('/arInvoices/:customerID', function(req, res) {
+  knex.select('dbo.arobligfact.*', 'dbo.arobligpayfact.*')
+    .from('dbo.customerdim')
+    .join('dbo.arobligfact', 'dbo.customerdim.customerkey', 'dbo.arobligfact.customerkey')
+    .join('dbo.arobligpayfact', 'dbo.arobligpayfact.arinvoice', 'dbo.arobligfact.arinvoice')
+    .where({customerID : req.params.customerID})
     .then(sql_res => res.send(sql_res))
     .catch(function(e){
         res.status(404).send('Not found');
