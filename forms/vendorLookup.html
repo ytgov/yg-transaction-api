@@ -98,22 +98,40 @@
            
             >
          
-              <b-form-input class="my-3" placeholder="First Name" @keyup="submitSearch"></b-form-input>
-              <b-form-input class="my-3" placeholder="Middle Name" @keyup="submitSearch" ></b-form-input>  
-              <b-form-input class="my-3" placeholder="Last Name" @keyup="submitSearch" ></b-form-input>    
+              <b-form-input 
+                class="my-3" 
+                placeholder="First Name"
+                v-model=searchQuery.first 
+                @keyup="submitSearch">
+              </b-form-input>
+             
+              <b-form-input 
+                class="my-3" 
+                placeholder="Last Name" 
+                @keyup="submitSearch" 
+                v-model=searchQuery.last ></b-form-input>    
 
              
         </b-form-group>
         <b-form-group
               label-cols-lg="3"
-              label="Address"
+              label="Additional Critera"
               label-size="lg"
               label-class="font-weight-bold pt-0"
               
             >   
-             <b-form-input class="my-3" placeholder="Street" @keyup="submitSearch"></b-form-input>
-              <b-form-input class="my-3" placeholder="Community" @keyup="submitSearch" ></b-form-input>  
-              <b-form-input class="my-3" placeholder="Postal Code" @keyup="submitSearch" ></b-form-input> 
+               <b-form-input 
+                class="my-3" 
+                placeholder="Middle Initial" 
+                @keyup="submitSearch" 
+                v-model=searchQuery.middle>
+                </b-form-input>  
+              <b-form-input 
+                class="my-3" 
+                placeholder="Last three digits of the postal code" 
+                @keyup="submitSearch" 
+                v-model=searchQuery.postal
+                ></b-form-input> 
 
               
               </b-form-group>
@@ -131,7 +149,7 @@ Results and confidence  go here
   </b-card>
   <b-card bg-variant="light"
           class="mb-3">
-   <h3> Confidence</h3>
+   <h3> Confidence: {{confidenceScore}}%</h3>
    
   </b-card>
   
@@ -152,6 +170,14 @@ Results and confidence  go here
         data:  () => ({
             entries: [],
             errorMessage: '',
+            searchQuery: {
+                first: '',
+                middle: '',
+                last: '',
+                street: '',
+                community: '',
+                postal: ''
+            },
             filter: '',
             count: 0,
             selected: '',
@@ -171,6 +197,22 @@ Results and confidence  go here
                     result += characters.charAt(Math.floor(Math.random() * characters.length));
                 }
                 return result;
+            },
+            confidenceScore () {
+                if (this.searchQuery.first 
+                           && this.searchQuery.last
+                           && this.searchQuery.middle
+                           && this.searchQuery.postal)
+                    return 99.69
+                else if (this.searchQuery.first 
+                       && this.searchQuery.last
+                       && this.searchQuery.middle)
+                    return 99.58
+                else if (this.searchQuery.first 
+                         && this.searchQuery.last)
+                return 98.05
+            else
+                return 0
             }
           
         },
