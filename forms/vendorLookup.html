@@ -60,8 +60,8 @@
 
     <b-form-group label="Choose the type of vendor:">
          
-      <b-form-radio v-model="selected" name="someRadios" value="people">People</b-form-radio>
-      <b-form-radio v-model="selected" name="someRadios" value="business">Business</b-form-radio>
+      <b-form-radio v-model="selected"  value="people">People</b-form-radio>
+      <b-form-radio v-model="selected"  value="business">Business</b-form-radio>
 
      </b-form-group>
      
@@ -73,7 +73,7 @@
       value= "include"
       disabled
       unchecked-value="not_included"
-      v-b-popover.hover.left="'Viewing LX vendors requires auditional authentication'" title="Heads up!"
+      v-b-popover.hover.left="'Viewing LX vendors requires additional authentication'" title="Heads up!"
     >
       Include HSS (LX) Vendors
     </b-form-checkbox>
@@ -97,32 +97,12 @@
             label-class="font-weight-bold pt-0"
            
             >
-            <b-form-group
-              label-cols-sm="3"
-              label="First Name:"
-              label-align-sm="right"
-              label-for="firstName"
-            >
-              <b-form-input id="firstName"></b-form-input>
-            
-            </b-form-group> 
+         
+              <b-form-input class="my-3" placeholder="First Name" @keyup="submitSearch"></b-form-input>
+              <b-form-input class="my-3" placeholder="Middle Name" @keyup="submitSearch" ></b-form-input>  
+              <b-form-input class="my-3" placeholder="Last Name" @keyup="submitSearch" ></b-form-input>    
 
-             <b-form-group
-              label-cols-sm="3"
-              label="Middle Name:"
-              label-align-sm="right"
-              label-for="nmiddleName"
-            >
-              <b-form-input id="middleName"></b-form-input>
-            </b-form-group>
-              <b-form-group
-              label-cols-sm="3"
-              label="Last Name:"
-              label-align-sm="right"
-              label-for="lastName"
-            >
-              <b-form-input id="lastName"></b-form-input>
-            </b-form-group>  
+             
         </b-form-group>
         <b-form-group
               label-cols-lg="3"
@@ -130,35 +110,14 @@
               label-size="lg"
               label-class="font-weight-bold pt-0"
               
-            >
+            >   
+             <b-form-input class="my-3" placeholder="Street" @keyup="submitSearch"></b-form-input>
+              <b-form-input class="my-3" placeholder="Community" @keyup="submitSearch" ></b-form-input>  
+              <b-form-input class="my-3" placeholder="Postal Code" @keyup="submitSearch" ></b-form-input> 
 
-                <b-form-group
-                label-cols-sm="3"
-                label="Street:"
-                label-align-sm="right"
-                label-for="nested-street"
-                >
-                    <b-form-input id="nested-street"></b-form-input>
-                </b-form-group>  
-              <b-form-group
-                  label-cols-sm="3"
-                  label="Community:"
-                  label-align-sm="right"
-                  label-for="nested-community"
-                >
-                  <b-form-input id="nested-community"></b-form-input>
-                </b-form-group>
-                <b-form-group
-                label-cols-sm="3"
-                label="Postal Code:"
-                label-align-sm="right"
-                label-for="Postal Code"
-              >
-                <b-form-input id="postal-code"></b-form-input>
+              
               </b-form-group>
         </b-card>
-   
-
      
  </b-col>
 <!--
@@ -181,15 +140,7 @@ Results and confidence  go here
        
        
        
-       <div>
-        <b-table 
-          :filter='filter'
-          striped
-
-          hover
-          :items="clean_entries"
-        ></b-table>
-    </div>
+      
 
       </b-container>
     </div>
@@ -222,6 +173,11 @@ Results and confidence  go here
                 return result;
             }
           
+        },
+        methods: {
+            submitSearch () {
+                //alert('Oh hay!')
+            }
         },
         created () {
             axios.get('')
