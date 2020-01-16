@@ -55,7 +55,7 @@ exports.personSearch = function(req, res){
     if(typeof req.query.postal != 'undefined') query.andWhere('VendAddrPost', 'like', '% '+req.query.postal)
     query.then(function(sql_res){
       if(sql_res.length == 1) res.send(sql_res);
-      else res.sendStatus(403);
+      else res.send({'error':'Too many results' , 'count':sql_res.length});
     })
     query.catch(function(e){
         res.status(404).send('Not found');
@@ -166,5 +166,3 @@ exports.customerSearchByCustomerId = function(req, res) {
         console.log(e);
     })
 }
-
-
