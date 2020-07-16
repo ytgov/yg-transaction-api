@@ -1,0 +1,118 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT [ContractKey]
+      ,[VendorKey]      -Vendor key to vendor id+name through vendorDim table
+      ,[AcctKey]
+      ,[AcctAccrualKey]
+      ,[SCContractNum]
+      ,[SCContractType]		--contract type (add this)
+      ,[SCOrigContractNum]	--commitment number
+      ,[SCRegDescr]			--commitment name
+      ,[SCContractState]	--contract state (add this)
+      ,[SCSOANum]
+      ,[SCFileNum]
+      ,[SCAcqMethod]		--commitment type
+      ,[SCValuePrice]
+      ,[SCContMgr]			--commitment owner (get id)
+      ,[SCContMgrPhon]		--contract manager phone (add this)
+      ,[SCExempt]
+      ,[SCExemptRtnl]
+      ,[SCFixedPrice]
+      ,[SCLocWork]
+      ,[SCLocOtherDescr]
+      ,[SCAitClass]
+      ,[SCRapRef]
+      ,[SCConReference]
+      ,[SCVendBusNum]
+      ,[SCVendBusType]
+      ,[SCVendContact]		--vend contact (add this)
+      ,[SCVendYKBus]
+      ,[SCVendName]			--vend name
+      ,[SCVendBusNumber]
+      ,[SCVendAddr]			--vend addr (add this)
+      ,[SCVendAddrL1]
+      ,[SCVendAddrL2]
+      ,[SCVendAddrL3]
+      ,[SCVendAddrL4]
+      ,[SCVendAddrCity]
+      ,[SCVendAddrProv]
+      ,[SCVendAddrCountry]
+      ,[SCVendAddrPost]
+      ,[SCVendCurrency]
+      ,[SCBillCentreID]
+      ,[SCBillCntct]
+      ,[SCBillCntctPhon]
+      ,[SCCommenceDate]		--start date
+      ,[SCCloserName]
+      ,[SCClosedDate]
+      ,[SCExpiryDate]		--end date
+      ,[SCDeptNum]
+      ,[SCDeptName]
+      ,[SCRevType]			--rev type (contract vs change order)
+      ,[SCRevDescr]			--rev description (add this)
+      ,[SCSeqNum]
+      ,[SCRevNum]
+      ,[SCRevLatest]
+      ,[SCCreateDate]		--create date
+      ,[SCAdminName]
+      ,[SCApproverName]
+      ,[SCApproverPosn]
+      ,[SCAuthName]
+      ,[SCAuthPosn]
+      ,[SCSubmitName]
+      ,[SCSubmitDate]
+      ,[SCSubmitTime]
+      ,[SCFinaliseDate]
+      ,[SCContSignDate]
+      ,[SCGovSignDate]
+      ,[SCFiscYearMP]		--fiscal year
+      ,[SCFiscYear]
+      ,[SCCurrentVal]		--contract value
+      ,[SCDeltaVal]			--contract delta
+      ,[SCCommitAdj]
+      ,[SCAccrualAccount]
+      ,[SCAccrualVal]
+      ,[SCCarryForwardVal]
+      ,[SCReference]
+      ,[SCPODistKey]
+      ,[SCOrganisation]		--account org
+      ,[SCSystemSource]
+      ,[secaccount]			--account code
+      ,[secdept]
+      ,[secvote]
+      ,[secprog]
+      ,[secactivity]
+      ,[secprogram]
+      ,[secdept99]
+      ,[secorg]
+  FROM [EDW-Finance-Stage].[dbo].[PurContractDistFact] where SCOrganisation='YHC'
+
+
+
+
+  SELECT vendor.[VendorID]
+  		,vendor.[VendName]
+  		,contract.[VendorKey]			--Vendor key to vendor id+name through vendorDim table
+        ,contract.[SCContractType]		--contract type (add this)
+        ,contract.[SCContractNum]	--commitment number
+        ,contract.[SCRegDescr]			--commitment name
+        ,contract.[SCContractState]	--contract state (add this)
+        ,contract.[SCAcqMethod]		--commitment type
+        ,contract.[SCContMgr]			--commitment owner (get id)
+        ,contract.[SCContMgrPhon]		--contract manager phone (add this)
+        ,contract.[SCVendContact]		--vend contact (add this)
+        ,contract.[SCVendName]			--vend name
+        ,contract.[SCVendAddr]			--vend addr (add this)
+        ,contract.[SCCommenceDate]		--start date
+        ,contract.[SCExpiryDate]		--end date
+        ,contract.[SCRevType]			--rev type (contract vs change order)
+        ,contract.[SCRevDescr]			--rev description (add this)
+        ,contract.[SCCreateDate]		--create date
+        ,contract.[SCFiscYearMP]		--fiscal year
+        ,contract.[SCCurrentVal]		--contract value
+        ,contract.[SCDeltaVal]			--contract delta
+        ,contract.[SCOrganisation]		--account org
+        ,contract.[secaccount]			--account code
+    FROM [EDW-Finance-Stage].[dbo].[PurContractDistFact] as contract left JOIN [EDW-Finance-Stage].[dbo].[VendorDim] as vendor on (contract.VendorKey=vendor.VendorKey)
+
+
+  sec_full or sec_full_relevant
