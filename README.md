@@ -1,3 +1,6 @@
+docker build --tag yg-transaction:latest .
+docker run --publish 3034:3001 --name yg-transaction --detach yg-transaction:latest
+
 # YuDrive API
 This app creates a secure RESTful API to a scrambled version of the YuDrive database.  This version is secured with Auth0 using tokens passed in the Authorization header.  Note there are a number of secrets included in this repository so please handle the code accordingly.     
 
@@ -36,4 +39,3 @@ curl --request POST \
 ```
 
 The response will return an access token that you can use your requests against the YuDrive API.
- 
