@@ -16,5 +16,5 @@ RUN npm install
 COPY . .
 #VOLUME . /usr/src/app
 
-EXPOSE 3001
+#EXPOSE 3001
 CMD [ "npm", "start" ]
