@@ -265,7 +265,7 @@ app.post("/vendor/search", async (req, res) => {
     return res.status(400).send("The body parameter 'term' is required.");
 
   let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
-    .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%') AND [VendAddrIsDefault] = 1", [term, term])
+    .whereRaw("VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND (VendorDim.VendorId like '%?%' OR VendorDim.VendName like '%?%') AND VendAddrDim.VendAddrIsDefault = 1", [term, term])
     .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
     .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
       "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
