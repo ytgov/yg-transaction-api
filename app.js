@@ -253,7 +253,7 @@ app.get("/cs/accounts", function (req, res) {
   //executeQuery (res, contractQuery(req.params.contractNumber));
 });
 
-app.post("/vendor/search", function (req, res) {
+app.post("/vendor/search", async (req, res) => {
   let { term } = req.body;
 
   if (!term)
