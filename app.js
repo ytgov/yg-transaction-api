@@ -253,22 +253,29 @@ app.get("/cs/accounts", function (req, res) {
   //executeQuery (res, contractQuery(req.params.contractNumber));
 });
 
-app.post(`/vendor/search`, jwtCheck, async (req, res) => {
+app.post("/vendor/search", function (req, res) {
+
+
+
+
+
+  console.log('body: '+req.body.term)
+
+
   let { term } = req.body;
-  term = term.trim();
-
-  if (!term)
-    return res.status(400).send();
-
-  let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
-    .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%')", [term, term])
-    .select(["VendorDim.VendorId", "VendorDim.VendName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDom.VendIsPayAllow",
-      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
-
-  return res.json({ data: results, meta: { item_count: results.length } });
+    if (!term)
+      return res.status(400).send();
+    term = term.trim();
+    if (term.length == 0)
+      return res.status(400).send();
+    let results = knex("EDW-Finance-Stage.dbo.VendorDim")
+      .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%')", [term, term])
+      .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
+      .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDom.VendIsPayAllow",
+        "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
+    return res.json({ data: results, meta: { item_count: results.length } });
 });
 
-//app.use(jwtCheck);
 
 app.get('/authorized', jwtCheck, function (req, res) {
   res.json({ message: ' Hello from a private endpoint!' });
