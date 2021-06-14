@@ -267,7 +267,7 @@ app.post("/vendor/search", async (req, res) => {
   let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
     .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%') AND [VendAddrIsDefault] = 1", [term, term])
     .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
-    .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDom.VendIsPayAllow",
+    .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
       "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
 
   return res.json({ data: results, meta: { item_count: results.length } });
