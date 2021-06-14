@@ -5,10 +5,10 @@ const jwks = require('jwks-rsa')
 const sql = require("mssql")
 const moment = require('moment')
 
-const {dbHost} = require('./config')
-const {dbUser} = require('./config')
-const {dbPassword} = require('./config')
-const {db} = require('./config')
+const { dbHost } = require('./config')
+const { dbUser } = require('./config')
+const { dbPassword } = require('./config')
+const { db } = require('./config')
 
 const knex = require('knex')({
   client: 'mssql',
@@ -254,26 +254,23 @@ app.get("/cs/accounts", function (req, res) {
 });
 
 app.post("/vendor/search", function (req, res) {
-
-
-
-
-
-  console.log('body: '+req.body.term)
-
-
   let { term } = req.body;
-    if (!term)
-      return res.status(400).send();
-    term = term.trim();
-    if (term.length == 0)
-      return res.status(400).send();
-    let results = knex("EDW-Finance-Stage.dbo.VendorDim")
-      .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%')", [term, term])
-      .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
-      .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDom.VendIsPayAllow",
-        "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
-    return res.json({ data: results, meta: { item_count: results.length } });
+
+  if (!term)
+    return res.status(400).send("The body parameter 'term' is required.");
+
+  term = term.trim().toUpperCase();
+
+  if (term.length == 0)
+    return res.status(400).send("The body parameter 'term' is required.");
+
+  let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
+    .whereRaw("ORG = 'YUKON' AND VendIsActive = '1' AND VendorId like 'CD%' AND (VendorId like '%?%' OR VendName like '%?%') AND [VendAddrIsDefault] = 1", [term, term])
+    .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
+    .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDom.VendIsPayAllow",
+      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct();
+
+  return res.json({ data: results, meta: { item_count: results.length } });
 });
 
 
