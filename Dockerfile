@@ -1,6 +1,7 @@
 FROM node:14-alpine3.10
 
 # Create app directory
+RUN mkdir /usr/src && chown -R node:node /usr/src
 RUN mkdir /usr/src/app && chown -R node:node /usr/src/app
 WORKDIR /usr/src/app
 
