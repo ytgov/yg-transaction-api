@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -13,6 +14,7 @@
     "express": "^4.16.4",
     "express-jwt": "^5.3.1",
     "express-jwt-authz": "^2.1.1",
+    "express-validator": "^6.12.0",
     "jwks-rsa": "^1.4.0",
     "knex": "^0.95.6",
     "moment": "^2.27.0",
@@ -22,5 +24,8 @@
   "author": {
     "name": "Ryan Agar",
     "email": "ryan.agar@gov.yk.ca"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }
