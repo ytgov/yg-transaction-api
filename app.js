@@ -19,7 +19,6 @@ const knex = require('knex')({
 
 const { body, validationResult } = require('express-validator')
 const { GLRouter } = require('./routes/gl')
-const checkScopes = jwtAuthz(['read:messages']);
 
 const app = express()
 const port = 3034
