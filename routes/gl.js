@@ -1,7 +1,3 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const jwt = require('express-jwt')
-const jwks = require('jwks-rsa')
 const sql = require("mssql")
 const moment = require('moment')
 const { body, validationResult } = require('express-validator')
