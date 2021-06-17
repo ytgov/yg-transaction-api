@@ -19,28 +19,18 @@ const knex = require('knex')({
 
 module.exports = function(app){
 
-  app.get("", function (req, res) {
-   res.send("Hello World")
+  app.get("/status", function (req, res) {
+   res.send("Finance API is up")
   });
 
-  //GET API
   app.get("/api/contract/:contractNumber", function (req, res) {
     knex.select(
-      'scdeptname as department',
-      'SCRevType as revisionType',
-      'SCRevDescr as revisionDescription',
-      'SCAuthName as authorizedBy',
-      'SCAuthPosn as authorizedPosition',
-      'SCCurrentVal as currentValue',
-      'SCDeltaVal as deltaValue',
-      'secaccount as account',
-      'SCCommenceDate as contractStartDate',
-      'SCContractNum as contractNumber',
-      'SCExpiryDate as contractEndDate',
-      'SCContMgr as contractManager',
-      'SCAcqMethod as acquisitionMethod',
-      'SCValuePrice as acquisitionEvaluation',
-      'SCContractState as contractState')
+        'scdeptname as department', 'SCRevType as revisionType', 'SCRevDescr as revisionDescription', 'SCAuthName as authorizedBy',
+        'SCAuthPosn as authorizedPosition', 'SCCurrentVal as currentValue', 'SCDeltaVal as deltaValue', 'secaccount as account',
+        'SCCommenceDate as contractStartDate', 'SCContractNum as contractNumber', 'SCExpiryDate as contractEndDate',
+        'SCContMgr as contractManager', 'SCAcqMethod as acquisitionMethod', 'SCValuePrice as acquisitionEvaluation',
+        'SCContractState as contractState'
+      )
       .from('PurContractDistFact')
       .where({ SCContractNum: req.params.contractNumber })
       .then((response) => {
@@ -59,13 +49,9 @@ module.exports = function(app){
 
   app.get("/api/gl/v2/contracts", function (req, res) {
     var query = knex.select(
-      'PurContractDistFact.ContractKey',
-      'PurContractDistFact.secaccount',
-      'PurContractDistFact.SCContractNum',
-      'PurContractDistFact.SCCreateDate',
-      'PurContractDistFact.SCSubmitDate',
-      'PurContractDistFact.SCSubmitTime'
-    )
+        'PurContractDistFact.ContractKey', 'PurContractDistFact.secaccount', 'PurContractDistFact.SCContractNum',
+        'PurContractDistFact.SCCreateDate', 'PurContractDistFact.SCSubmitDate', 'PurContractDistFact.SCSubmitTime'
+      )
       .from('PurContractDistFact')
       .where('SCCreateDate', '>=', req.query.date)
       .orderBy('SCCreateDate', 'desc')
@@ -80,22 +66,10 @@ module.exports = function(app){
   app.get("/api/gl/v2/:account", function (req, res) {
     console.log('in new gl')
     knex.select(
-      'JEDate as EntryDate',
-      'JENo as journalNumber',
-      'GLActuals as glActuals',
-      'JEDescr as description',
-      'JERefDate as journalReferenceDate',
-      'JESysNo as JESysNo',
-      'JEREF1',
-      'JEREF2',
-      'JEREF3',
-      'JEREF4',
-      'JEAuditUserid as auditUser',
-      'ORG as organization',
-      'FiscYear as fiscalYear',
-      'FiscPeriod as fiscalPeriod',
-      'CalYear as calendarYear'
-    )
+        'JEDate as EntryDate', 'JENo as journalNumber', 'GLActuals as glActuals', 'JEDescr as description',
+        'JERefDate as journalReferenceDate', 'JESysNo as JESysNo', 'JEREF1', 'JEREF2', 'JEREF3', 'JEREF4', 'JEAuditUserid as auditUser',
+        'ORG as organization', 'FiscYear as fiscalYear', 'FiscPeriod as fiscalPeriod', 'CalYear as calendarYear'
+      )
       .from('GLActualsFact')
       .where({ secaccount: req.params.account })
       .leftJoin('Fiscperdim', 'GLActualsFact.FiscPerKey', 'Fiscperdim.FiscPerKey')
@@ -107,36 +81,17 @@ module.exports = function(app){
 
   });
 
-
-
   app.get("/api/gl/v2/contract/:contractNumber", function (req, res) {
     var query = knex.select(
-      'PurContractDistFact.ContractKey',
-      'PurContractDistFact.secaccount',
-      'VendorDim.VendorID',
-      'VendorDim.VendName',
-      'PurContractDistFact.SCContractType',
-      'PurContractDistFact.SCContractNum',
-      'PurContractDistFact.SCRegDescr',
-      'PurContractDistFact.SCContractState',
-      'PurContractDistFact.SCAcqMethod',
-      'PurContractDistFact.SCContMgr',
-      'PurContractDistFact.SCContMgrPhon',
-      'PurContractDistFact.SCVendContact',
-      'PurContractDistFact.SCVendName',
-      'PurContractDistFact.SCVendAddr',
-      'PurContractDistFact.SCSubmitDate',
-      'PurContractDistFact.SCSubmitTime',
-      'PurContractDistFact.SCCommenceDate',
-      'PurContractDistFact.SCExpiryDate',
-      'PurContractDistFact.SCRevType',
-      'PurContractDistFact.SCRevDescr',
-      'PurContractDistFact.SCCreateDate',
-      'PurContractDistFact.SCFiscYearMP',
-      'PurContractDistFact.SCCurrentVal',
-      'PurContractDistFact.SCDeltaVal',
-      'PurContractDistFact.SCOrganisation'
-    )
+        'PurContractDistFact.ContractKey', 'PurContractDistFact.secaccount', 'VendorDim.VendorID', 'VendorDim.VendName',
+        'PurContractDistFact.SCContractType', 'PurContractDistFact.SCContractNum', 'PurContractDistFact.SCRegDescr',
+        'PurContractDistFact.SCContractState', 'PurContractDistFact.SCAcqMethod', 'PurContractDistFact.SCContMgr',
+        'PurContractDistFact.SCContMgrPhon', 'PurContractDistFact.SCVendContact', 'PurContractDistFact.SCVendName',
+        'PurContractDistFact.SCVendAddr', 'PurContractDistFact.SCSubmitDate', 'PurContractDistFact.SCSubmitTime',
+        'PurContractDistFact.SCCommenceDate', 'PurContractDistFact.SCExpiryDate', 'PurContractDistFact.SCRevType',
+        'PurContractDistFact.SCRevDescr', 'PurContractDistFact.SCCreateDate', 'PurContractDistFact.SCFiscYearMP',
+        'PurContractDistFact.SCCurrentVal', 'PurContractDistFact.SCDeltaVal', 'PurContractDistFact.SCOrganisation'
+      )
       .from('PurContractDistFact')
       .where({ SCContractNum: req.params.contractNumber })
       .leftJoin('VendorDim', 'PurContractDistFact.VendorKey', 'VendorDim.VendorKey')
@@ -147,15 +102,9 @@ module.exports = function(app){
 
   app.get("/api/gl/:account/:contractNumber", function (req, res) {
     knex.select(
-      "GLActuals as invoiceAmount",
-      "JEDate",
-      "JEDescr as vendorId",
-      "JERefDate",
-      "JERef1 as contractNumber_JEREF1",
-      "JERef2 as invoiceNUmber",
-      "JEAuditUserid",
-      "JEAuditDate",
-      "secaccount as account")
+        'GLActuals as invoiceAmount', 'JEDate', 'JEDescr as vendorId', 'JERefDate', 'JERef1 as contractNumber_JEREF1',
+        'JERef2 as invoiceNUmber', 'JEAuditUserid', 'JEAuditDate', 'secaccount as account'
+      )
       .from('EDW-Finance-Stage.dbo.GLActualsFact')
       .where({ secaccount: req.params.account })
       .where({ JERef1: req.params.contractNumber })
@@ -166,16 +115,10 @@ module.exports = function(app){
 
   app.get("/cs/accounts/:accountNumber", function (req, res) {
     knex.select(
-      'Account as account',
-      'deptDescr as department',
-      'AcctDescr as accountDescription',
-      'TypeDescr as type',
-      'ActiveDescr as status',
-      'ObjectDescr as objectDescription',
-      'A2VoteDescr as voteDescription',
-      'A2ProgDescr as programDescription',
-      'A2ActivityDescr as activityDescription',
-      'A2ElementDescr as elementDescription')
+        'Account as account', 'deptDescr as department', 'AcctDescr as accountDescription', 'TypeDescr as type',
+        'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription', 
+        'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
+      )
       .from('GLAcctDim')
       .where({ account: req.params.accountNumber })
       .whereNot({ dept: 4 })
@@ -186,16 +129,10 @@ module.exports = function(app){
 
   app.get("/cs/accounts", function (req, res) {
     knex.select(
-      'Account as account',
-      'deptDescr as department',
-      'AcctDescr as accountDescription',
-      'TypeDescr as type',
-      'ActiveDescr as status',
-      'ObjectDescr as objectDescription',
-      'A2VoteDescr as voteDescription',
-      'A2ProgDescr as programDescription',
-      'A2ActivityDescr as activityDescription',
-      'A2ElementDescr as elementDescription')
+        'Account as account', 'deptDescr as department', 'AcctDescr as accountDescription', 'TypeDescr as type', 
+        'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription',
+        'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
+      )
       .from('EDW-Finance-Stage.dbo.GLAcctDim')
       .whereNot({ dept: '4' })
       .then((response) => {
