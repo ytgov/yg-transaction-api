@@ -245,7 +245,7 @@ module.exports = function(app){
       VendorID as vendorid, EffDate as eff_date, ExpAmt as amount, TransDescr as trans_desc, Source as source, APDescr as ap_desc,
       APInvoiceNo as invoice_num, APInvoiceDate as invoice_date, APBatchNo as batch_num, IsDistributed as is_distributed 
       FROM [EDW-Finance-Stage].[dbo].[TransFact] INNER JOIN VendorDim on TransFact.VEndorKey = VendorDim.VendorKey
-      INNER JOIN FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey) WHERE SECACCOUNT = ?`;
+      INNER JOIN FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey) WHERE APDistKey IS NOT NULL AND SECACCOUNT = ?`;
 
     if (vendorid) {
       query += ` AND VendorId = ?`;
