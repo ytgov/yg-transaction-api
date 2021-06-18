@@ -1,3 +1,4 @@
+const {dbHost, dbUser, dbPassword, dbName} = require('../config')
 
 const knex = require('knex')({
     client: 'mssql',
@@ -5,7 +6,7 @@ const knex = require('knex')({
         host: dbHost,
         user: dbUser,
         password: dbPassword,
-        database: db
+        database: dbName
     }
 });
 
