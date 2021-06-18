@@ -8,6 +8,6 @@ const knex = require('knex')({
         password: dbPassword,
         database: dbName
     }
-});
+})
 
-module.exports = knex;
+module.exports = knex

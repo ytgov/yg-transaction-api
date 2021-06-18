@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator')
 const moment = require('moment')
 const knex = require('../data')
 
-const mjRouter = express.Router
+const mjRouter = express.Router()
 module.exports = mjRouter
 
 mjRouter.post("/vendor/search", async (req, res) => {
