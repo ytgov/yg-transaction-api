@@ -1,18 +1,21 @@
 const express = require('express')
-const { body, validationResult } = require('express-validator')
+const { body, validationResult, param } = require('express-validator')
 const moment = require('moment')
 const knex = require('../data')
 
 const mjRouter = express.Router()
 module.exports = mjRouter
 
-mjRouter.post("/vendor/search", async (req, res) => {
+mjRouter.post("/vendor/search", [body("term").notEmpty().toUpperCase().trim()], async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   let { term } = req.body;
 
   if (!term)
     return res.status(400).send("The body parameter 'term' is required.");
-
-  term = term.trim().toUpperCase();
 
   if (term.length == 0)
     return res.status(400).send("The body parameter 'term' is required.");
@@ -20,6 +23,24 @@ mjRouter.post("/vendor/search", async (req, res) => {
 
   let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
     .whereRaw(`VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND (VendorDim.VendorId like ? OR VendorDim.VendName like ? OR VendAddrDim.VendAddrL1 like ?) AND VendAddrDim.VendAddrIsDefault = 1`, [`%${term}%`, `%${term}%`, `%${term}%`])
+    .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
+    .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
+      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct().orderBy("VendorDim.VendorId");
+
+  return res.json({ data: results, meta: { item_count: results.length } });
+});
+
+mjRouter.get("/vendor/:id", [param("id").notEmpty().toUpperCase().trim()], async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  let { id } = req.params;
+
+  let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
+    .whereRaw(`VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND VendorDim.VendorId like ? AND VendAddrDim.VendAddrIsDefault = 1`, [id])
     .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
     .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
       "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct().orderBy("VendorDim.VendorId");
