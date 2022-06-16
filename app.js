@@ -27,8 +27,8 @@ app.use("/api/v1/", mjRouter)
 app.use("/api/v2/gl", glV2Router)
 app.use("/api/v2/cs", csRouter)
 app.use("/api/v2/contracts", contractRouter)
-app.use("/api/v2/", mjRouter)
 app.use("/api/v2/accounts", accountsRouter)
+app.use("/api/v2/", mjRouter)
 
 app.use("/", oldRouter)
 
