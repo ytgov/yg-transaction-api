@@ -17,6 +17,7 @@ const contractRouter = require('./routes/contracts')
 const oldRouter = require('./routes/gl')
 const csRouter = require('./routes/cs')
 const mjRouter = require('./routes/mj');
+const accountsRouter = require('./routes/accounts.router');
 
 app.use("/api/v1/gl", glV1Router)
 app.use("/api/v1/cs", csRouter)
@@ -27,6 +28,7 @@ app.use("/api/v2/gl", glV2Router)
 app.use("/api/v2/cs", csRouter)
 app.use("/api/v2/contracts", contractRouter)
 app.use("/api/v2/", mjRouter)
+app.use("/api/v2/accounts", accountsRouter)
 
 app.use("/", oldRouter)
 
