@@ -5,19 +5,32 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "dependencies": {
+    "big-number": "^2.0.0",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.15.2",
+    "dotenv": "^8.2.0",
+    "escape-string-regexp": "^5.0.0",
     "express": "^4.16.4",
-    "express-jwt": "^5.3.1",
+    "express-jwt": "^6.0.0",
     "express-jwt-authz": "^2.1.1",
+    "express-validator": "^6.12.0",
+    "generic-pool": "^3.7.8",
     "jwks-rsa": "^1.4.0",
-    "knex": "^0.16.3",
-    "mssql": "^ 3.3.0"
+    "knex": "^0.95.6",
+    "mkdirp": "^1.0.4",
+    "moment": "^2.27.0",
+    "mssql": "^7.1.3",
+    "tedious": "^11.0.9"
   },
   "author": {
     "name": "Ryan Agar",
     "email": "ryan.agar@gov.yk.ca"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
   }
 }

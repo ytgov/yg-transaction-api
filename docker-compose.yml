@@ -1,0 +1,7 @@
+version: '3'
+services:
+  server:
+    container_name: transaction_server
+    build: .
+    ports:
+      - "3034:3034"
