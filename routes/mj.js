@@ -65,9 +65,9 @@ mjRouter.post("/transactions/search", [
   let query = `SELECT TransFact.secaccount as account, TransFactKey as tranaction_key, FiscYear as fisc_year, FiscPeriod as fisc_period, 
         VendorID as vendorid, EffDate as eff_date, ExpAmt as amount, TransDescr as trans_desc, Source as source, APDescr as ap_desc,
         TransFact.APInvoiceNo as invoice_num, TransFact.APInvoiceDate as invoice_date, TransFact.APBatchNo as batch_num, TransFact.IsDistributed as is_distributed, APRef4 as ap_ref4
-        FROM [EDW-Finance-Stage].[dbo].[TransFact] INNER JOIN VendorDim on TransFact.VEndorKey = VendorDim.VendorKey
-        INNER JOIN FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey)
-        INNER JOIN APDistFactAll ON (TransFact.APDistKey = APDistFactAll.APDistKey) WHERE TransFact.APDistKey IS NOT NULL AND TransFact.SECACCOUNT = ?`;
+        FROM [EDW-Finance-Stage].[dbo].[TransFact] INNER JOIN [EDW-Finance-Stage].[dbo].VendorDim on TransFact.VEndorKey = VendorDim.VendorKey
+        INNER JOIN [EDW-Finance-Stage].[dbo].FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey)
+        INNER JOIN [EDW-Finance-Stage].[dbo].APDistFactAll ON (TransFact.APDistKey = APDistFactAll.APDistKey) WHERE TransFact.APDistKey IS NOT NULL AND TransFact.SECACCOUNT = ?`;
 
   if (vendorid) {
     query += ` AND VendorId = ?`;
