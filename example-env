@@ -1,4 +1,4 @@
-DB_HOST=sql-dw-prd
-DB_USER=restapi2
+DB_HOST=*********
+DB_USER=*********
 DB_PASSWORD=*********
-DB_DB=EDW-Finance-Stage
+DB_DB=*********
