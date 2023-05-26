@@ -25,7 +25,7 @@ mjRouter.post("/vendor/search", [body("term").notEmpty().toUpperCase().trim()], 
     .whereRaw(`VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND (VendorDim.VendorId like ? OR VendorDim.VendName like ? OR VendAddrDim.VendAddrL1 like ?) AND VendAddrDim.VendAddrIsDefault = 1`, [`%${term}%`, `%${term}%`, `%${term}%`])
     .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
     .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
-      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct().orderBy("VendorDim.VendorId");
+      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost", "VendorDim.VendPayTypeCode"]).distinct().orderBy("VendorDim.VendorId");
 
   return res.json({ data: results, meta: { item_count: results.length } });
 });
@@ -43,7 +43,7 @@ mjRouter.get("/vendor/:id", [param("id").notEmpty().toUpperCase().trim()], async
     .whereRaw(`VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND VendorDim.VendorId like ? AND VendAddrDim.VendAddrIsDefault = 1`, [id])
     .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
     .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
-      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct().orderBy("VendorDim.VendorId");
+      "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost", "VendorDim.VendPayTypeCode"]).distinct().orderBy("VendorDim.VendorId");
 
   return res.json({ data: results, meta: { item_count: results.length } });
 });
