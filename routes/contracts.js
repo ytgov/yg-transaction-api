@@ -13,7 +13,7 @@ contractRouter.get("/:contractNumber", function (req, res) {
         'SCContMgr as contractManager', 'SCAcqMethod as acquisitionMethod', 'SCValuePrice as acquisitionEvaluation',
         'SCContractState as contractState'
     )
-        .from('PurContractDistFact')
+        .from('softstar.PurContractDistFact')
         .where({ SCContractNum: req.params.contractNumber })
         .then((response) => {
             res.json(response)

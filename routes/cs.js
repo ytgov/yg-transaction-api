@@ -11,7 +11,7 @@ csRouter.get("/accounts/:accountNumber", function (req, res) {
         'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription',
         'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
     )
-        .from('GLAcctDim')
+        .from('softstar.GLAcctDim')
         .where({ account: req.params.accountNumber })
         .whereNot({ dept: 4 })
         .then((response) => {
@@ -25,7 +25,7 @@ csRouter.get("/accounts", function (req, res) {
         'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription',
         'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
     )
-        .from('EDW-Finance-Stage.dbo.GLAcctDim')
+        .from('softstar.GLAcctDim')
         .whereNot({ dept: '4' })
         .then((response) => {
             res.json(JSON.stringify(response, null, 2))

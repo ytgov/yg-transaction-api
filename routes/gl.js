@@ -19,7 +19,7 @@ oldRouter.get("/api/contract/:contractNumber", function (req, res) {
     'SCContMgr as contractManager', 'SCAcqMethod as acquisitionMethod', 'SCValuePrice as acquisitionEvaluation',
     'SCContractState as contractState'
   )
-    .from('PurContractDistFact')
+    .from('softstar.PurContractDistFact')
     .where({ SCContractNum: req.params.contractNumber })
     .then((response) => {
       res.json(response)
@@ -28,7 +28,7 @@ oldRouter.get("/api/contract/:contractNumber", function (req, res) {
 
 oldRouter.get("/api/gl/:account", function (req, res) {
   knex.select()
-    .from('GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
     .then((response) => {
       res.json(response)
@@ -40,7 +40,7 @@ oldRouter.get("/api/gl/v2/contracts", function (req, res) {
     'PurContractDistFact.ContractKey', 'PurContractDistFact.secaccount', 'PurContractDistFact.SCContractNum',
     'PurContractDistFact.SCCreateDate', 'PurContractDistFact.SCSubmitDate', 'PurContractDistFact.SCSubmitTime'
   )
-    .from('PurContractDistFact')
+    .from('softstar.PurContractDistFact')
     .where('SCCreateDate', '>=', req.query.date)
     .orderBy('SCCreateDate', 'desc')
     .then((response) => {
@@ -58,9 +58,9 @@ oldRouter.get("/api/gl/v2/:account", function (req, res) {
     'JERefDate as journalReferenceDate', 'JESysNo as JESysNo', 'JEREF1', 'JEREF2', 'JEREF3', 'JEREF4', 'JEAuditUserid as auditUser',
     'ORG as organization', 'FiscYear as fiscalYear', 'FiscPeriod as fiscalPeriod', 'CalYear as calendarYear'
   )
-    .from('GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
-    .leftJoin('Fiscperdim', 'GLActualsFact.FiscPerKey', 'Fiscperdim.FiscPerKey')
+    .leftJoin('softstar.Fiscperdim', 'GLActualsFact.FiscPerKey', 'Fiscperdim.FiscPerKey')
     .then((response) => {
       console.log('In response!')
       console.log(response)
@@ -80,9 +80,9 @@ oldRouter.get("/api/gl/v2/contract/:contractNumber", function (req, res) {
     'PurContractDistFact.SCRevDescr', 'PurContractDistFact.SCCreateDate', 'PurContractDistFact.SCFiscYearMP',
     'PurContractDistFact.SCCurrentVal', 'PurContractDistFact.SCDeltaVal', 'PurContractDistFact.SCOrganisation'
   )
-    .from('PurContractDistFact')
+    .from('softstar.PurContractDistFact')
     .where({ SCContractNum: req.params.contractNumber })
-    .leftJoin('VendorDim', 'PurContractDistFact.VendorKey', 'VendorDim.VendorKey')
+    .leftJoin('softstar.VendorDim', 'PurContractDistFact.VendorKey', 'VendorDim.VendorKey')
     .then((response) => {
       res.json(response)
     })
@@ -93,7 +93,7 @@ oldRouter.get("/api/gl/:account/:contractNumber", function (req, res) {
     'GLActuals as invoiceAmount', 'JEDate', 'JEDescr as vendorId', 'JERefDate', 'JERef1 as contractNumber_JEREF1',
     'JERef2 as invoiceNUmber', 'JEAuditUserid', 'JEAuditDate', 'secaccount as account'
   )
-    .from('EDW-Finance-Stage.dbo.GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
     .where({ JERef1: req.params.contractNumber })
     .then((response) => {
@@ -107,7 +107,7 @@ oldRouter.get("/cs/accounts/:accountNumber", function (req, res) {
     'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription',
     'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
   )
-    .from('GLAcctDim')
+    .from('softstar.GLAcctDim')
     .where({ account: req.params.accountNumber })
     .whereNot({ dept: 4 })
     .then((response) => {
@@ -121,7 +121,7 @@ oldRouter.get("/cs/accounts", function (req, res) {
     'ActiveDescr as status', 'ObjectDescr as objectDescription', 'A2VoteDescr as voteDescription',
     'A2ProgDescr as programDescription', 'A2ActivityDescr as activityDescription', 'A2ElementDescr as elementDescription'
   )
-    .from('EDW-Finance-Stage.dbo.GLAcctDim')
+    .from('softstar.GLAcctDim')
     .whereNot({ dept: '4' })
     .then((response) => {
       res.json(JSON.stringify(response, null, 2))
@@ -139,9 +139,9 @@ oldRouter.post("/vendor/search", async (req, res) => {
   if (term.length == 0)
     return res.status(400).send("The body parameter 'term' is required.");
 
-  let results = await knex("EDW-Finance-Stage.dbo.VendorDim")
+  let results = await knex("softstar.VendorDim")
     .whereRaw(`VendorDim.ORG = 'YUKON' AND VendorDim.VendIsActive = '1' AND VendorDim.VendorId like 'CD%' AND (VendorDim.VendorId like ? OR VendorDim.VendName like ?) AND VendAddrDim.VendAddrIsDefault = 1`, [`%${term}%`, `%${term}%`])
-    .leftJoin("EDW-Finance-Stage.dbo.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
+    .leftJoin("softstar.VendAddrDim", "VendorDim.VendorKey", "VendAddrDim.VendorKey")
     .select(["VendorDim.VendorId", "VendorDim.VendName", "VendorDim.VendShortName", "VendAddrDim.VendAddrCity", "VendorDim.VendIsPerson", "VendorDim.VendIsPayAllow",
       "VendAddrDim.VendAddrL1", "VendAddrDim.VendAddrL2", "VendAddrDim.VendAddrProv", "VendAddrDim.VendAddrPost"]).distinct().orderBy("VendorDim.VendorId");
 
@@ -165,8 +165,8 @@ oldRouter.post("/transactions/search", [
   let query = `SELECT secaccount as account, TransFactKey as tranaction_key, FiscYear as fisc_year, FiscPeriod as fisc_period, 
       VendorID as vendorid, EffDate as eff_date, ExpAmt as amount, TransDescr as trans_desc, Source as source, APDescr as ap_desc,
       APInvoiceNo as invoice_num, APInvoiceDate as invoice_date, APBatchNo as batch_num, IsDistributed as is_distributed 
-      FROM [EDW-Finance-Stage].[dbo].[TransFact] INNER JOIN VendorDim on TransFact.VEndorKey = VendorDim.VendorKey
-      INNER JOIN FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey) WHERE APDistKey IS NOT NULL AND SECACCOUNT = ?`;
+      FROM softstar.[TransFact] INNER JOIN softstar.VendorDim on TransFact.VEndorKey = VendorDim.VendorKey
+      INNER JOIN softstar.FiscperDim ON (TransFact.FiscPerKey = FiscperDim.FiscPerKey) WHERE APDistKey IS NOT NULL AND SECACCOUNT = ?`;
 
   if (vendorid) {
     query += ` AND VendorId = ?`;

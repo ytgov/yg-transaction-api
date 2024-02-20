@@ -7,7 +7,7 @@ module.exports = glV1Router
 
 glV1Router.get("/:account", function (req, res) {
   knex.select()
-    .from('GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
     .then((response) => {
       res.json(response)
@@ -19,7 +19,7 @@ glV1Router.get("/:account/:contractNumber", function (req, res) {
     'GLActuals as invoiceAmount', 'JEDate', 'JEDescr as vendorId', 'JERefDate', 'JERef1 as contractNumber_JEREF1',
     'JERef2 as invoiceNUmber', 'JEAuditUserid', 'JEAuditDate', 'secaccount as account'
   )
-    .from('EDW-Finance-Stage.dbo.GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
     .where({ JERef1: req.params.contractNumber })
     .then((response) => {

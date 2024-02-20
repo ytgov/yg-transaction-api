@@ -5,7 +5,7 @@ const accountsRouter = express.Router()
 module.exports = accountsRouter
 
 accountsRouter.get("/departments", async (req, res) => {
-  let results = await knex("EDW-Finance-Stage.dbo.GLAcctTree")
+  let results = await knex("softstar.GLAcctTree")
     .select(["account as dept", "descr"])
     .where({ org: "YUKON", level: 1 })
     .distinct().orderBy("account");

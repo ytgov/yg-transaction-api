@@ -10,7 +10,7 @@ glV2Router.get("/contracts", function (req, res) {
     'PurContractDistFact.ContractKey', 'PurContractDistFact.secaccount', 'PurContractDistFact.SCContractNum',
     'PurContractDistFact.SCCreateDate', 'PurContractDistFact.SCSubmitDate', 'PurContractDistFact.SCSubmitTime'
   )
-    .from('PurContractDistFact')
+    .from('softstar.PurContractDistFact')
     .where('SCCreateDate', '>=', req.query.date)
     .orderBy('SCCreateDate', 'desc')
     .then((response) => {
@@ -28,9 +28,9 @@ glV2Router.get("/:account", function (req, res) {
     'JERefDate as journalReferenceDate', 'JESysNo as JESysNo', 'JEREF1', 'JEREF2', 'JEREF3', 'JEREF4', 'JEAuditUserid as auditUser',
     'ORG as organization', 'FiscYear as fiscalYear', 'FiscPeriod as fiscalPeriod', 'CalYear as calendarYear'
   )
-    .from('GLActualsFact')
+    .from('softstar.GLActualsFact')
     .where({ secaccount: req.params.account })
-    .leftJoin('Fiscperdim', 'GLActualsFact.FiscPerKey', 'Fiscperdim.FiscPerKey')
+    .leftJoin('softstar.Fiscperdim', 'GLActualsFact.FiscPerKey', 'Fiscperdim.FiscPerKey')
     .then((response) => {
       console.log('In response!')
       console.log(response)
